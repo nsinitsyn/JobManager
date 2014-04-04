@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="ca206aa6-cebe-44ea-bb48-b961fba9134a" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://localhost:8000/JobManagerService" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="JobManagerService.wsdl" MetadataType="Wsdl" ID="979fb1e0-ecb6-4af7-99af-59beed6ce5a3" SourceId="1" SourceUrl="http://localhost:8000/JobManagerService?wsdl" />
+    <MetadataFile FileName="JobManagerService.xsd" MetadataType="Schema" ID="1b022584-64ca-4115-8d38-870ce382a335" SourceId="1" SourceUrl="http://localhost:8000/JobManagerService?xsd=xsd3" />
+    <MetadataFile FileName="JobManagerService1.xsd" MetadataType="Schema" ID="49116bfe-f483-4302-965d-a74e3f049d7f" SourceId="1" SourceUrl="http://localhost:8000/JobManagerService?xsd=xsd1" />
+    <MetadataFile FileName="JobManagerService2.xsd" MetadataType="Schema" ID="1546d51c-98e9-4338-9044-36d6ba53ba52" SourceId="1" SourceUrl="http://localhost:8000/JobManagerService?xsd=xsd4" />
+    <MetadataFile FileName="JobManagerService.disco" MetadataType="Disco" ID="fb869743-ba69-4405-95a0-23637c8e623c" SourceId="1" SourceUrl="http://localhost:8000/JobManagerService?disco" />
+    <MetadataFile FileName="JobManagerService3.xsd" MetadataType="Schema" ID="b8ee3829-0d43-44ec-aa76-8487565e614d" SourceId="1" SourceUrl="http://localhost:8000/JobManagerService?xsd=xsd2" />
+    <MetadataFile FileName="JobManagerService4.xsd" MetadataType="Schema" ID="52104f80-4c3a-46e1-bd80-7d3468ad03e6" SourceId="1" SourceUrl="http://localhost:8000/JobManagerService?xsd=xsd0" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>
