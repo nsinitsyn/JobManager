@@ -12,15 +12,24 @@ using JobManager.Data.DTO;
 
 namespace JobManager.JobManagerService
 {
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Multiple)]
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Multiple)]
     public class JobManagerService : IJobManagerService
     {
         private readonly string _jobsLibraryAssemblyName;
         private const string JobsLibraryAssemblyNameKey = "JobsLibraryAssemblyName";
+        private readonly Scheduler.Scheduler _scheduler;
 
         public JobManagerService()
         {
+            //_scheduler = new Scheduler.Scheduler();
             _jobsLibraryAssemblyName = ConfigurationManager.AppSettings[JobsLibraryAssemblyNameKey];
+
+            // Получить все самозапускающиеся джобы из конфига
+            // Получить динамически назначенные джобы из базы
+
+            //_scheduler.Start();
+            //_scheduler.DeleteJob(jobFromConfig);
+            // Зашедулить снова джобы из конфига
         }
 
         public JobOutputDataBase RunJob(JobInputDataBase jobInputData)

@@ -56,6 +56,10 @@
       <Project>{65f9427b-1073-4952-b569-6981ce5eb8da}</Project>
       <Name>JobManager.Data</Name>
     </ProjectReference>
+    <ProjectReference Include="..\JobManager.Scheduler\JobManager.Scheduler.csproj">
+      <Project>{3486b1d1-e258-4ad8-a0dc-e7c8ad29d973}</Project>
+      <Name>JobManager.Scheduler</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\WCF\Microsoft.VisualStudio.ServiceModel.targets" />

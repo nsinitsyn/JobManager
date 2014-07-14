@@ -47,5 +47,10 @@ namespace JobsLibraryTest
                            SerializedResult = Serializator.SerializeToMemory(new JobWorkerOutput { Result = "Worker 1 - It's OK!" })
                        };
         }
+
+        public JobOutputDataBase SendSignal(SignalToken signalToken)
+        {
+            
+        }
     }
 }
