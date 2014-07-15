@@ -7,15 +7,28 @@ using JobManager.Data.DTO;
 
 namespace JobManager.Data.Business
 {
-    public abstract class JobWorkerBase : IJobWorker
+    public abstract class JobWorkerBase
     {
         public event JobManagerEventHandler OnEvent;
 
-        public abstract TransferData Run(JobInputData parameters);
+        protected abstract TransferData Run(object data);
+        protected abstract TransferData Signal(object data);
 
-        public void SendEvent(JobEventData eventData)
+        public TransferData RunWrap(object data)
         {
-            OnEvent(this, new JobManagerEventArgs { EventData = eventData });
+            var result = Run(data);
+            return result;
+        }
+
+        public TransferData SignalWrap(object data)
+        {
+            var result = Signal(data);
+            return result;
+        }
+
+        public void SendEvent(JobEventDto eventDto)
+        {
+            OnEvent(this, new JobManagerEventArgs { EventDto = eventDto });
         }
     }
 }

@@ -78,6 +78,7 @@
     <None Include="packages.config" />
     <None Include="Properties\DataSources\JobManager.Data.DTO.JobOutputDataBase.datasource" />
     <None Include="Properties\DataSources\JobManager.Data.DTO.TransferData.datasource" />
+    <None Include="Properties\DataSources\JobManager.Data.DTO.WorkerDto.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

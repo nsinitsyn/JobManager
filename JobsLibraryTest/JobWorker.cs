@@ -19,32 +19,46 @@ namespace JobsLibraryTest
 {
     public class JobWorker : JobWorkerBase
     {
-        public override TransferData Run(JobInputData parameters)
+        private bool Stop = false;
+
+        protected override TransferData Run(object data)
         {
-            Logger.Log.Info("Worker 1 start running");
+            //Logger.Log.Info("Worker 1 start running");
 
-            //var sJobData = parameters.SerializedJobData;
+            //var p = (JobWorkerParameters) data;
 
-            //var p = (JobWorkerParameters)Serializator.DeserializeFromMemory(sJobData);
+            //var eventDto = new JobEventDto
+            //                    {
+            //                        TransferData = new TransferData("eventData from Worker1")
+            //                    };
 
-            var p = (JobWorkerParameters)parameters.Data.GetData();
-
-            // Кинуть синхронное событие с параметром и получить результат
-
-            var eventData = new JobEventData
-                                {
-                                    WorkerType = typeof(JobWorker).ToString(),
-                                    TransferData = new TransferData("eventData from Worker1")
-                                };
-
-            SendEvent(eventData);
-
-            // Кинуть событие с параметром и получить результат
-            //SendEventAsync(JobWorker1Event.WTF, eventDataBase, resAsync => { });
+            //SendEvent(eventDto);
 
             //Thread.Sleep(10000);
 
-            return new TransferData(new JobWorkerOutput {Result = "Worker 1 - It's OK!"});
+            //return new TransferData(new JobWorkerOutput {Result = "Worker 1 - It's OK!"});
+
+            while (true)
+            {
+                if (Stop)
+                {
+                    break;
+                }
+
+                Thread.Sleep(5000);
+            }
+
+            return null;
+        }
+
+        protected override TransferData Signal(object data)
+        {
+            var d = (string) data;
+            if (d == "stop")
+            {
+                Stop = true;
+            }
+            return null;
         }
 
         //public JobOutputDataBase SendSignal(SignalToken signalToken)

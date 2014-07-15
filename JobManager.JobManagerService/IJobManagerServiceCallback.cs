@@ -11,6 +11,6 @@ namespace JobManager.JobManagerService
     public interface IJobManagerServiceCallback
     {
         [OperationContract(IsOneWay = true)]
-        void OnEvent(JobEventData eventData);
+        void OnEvent(JobEventDto eventDto);
     }
 }

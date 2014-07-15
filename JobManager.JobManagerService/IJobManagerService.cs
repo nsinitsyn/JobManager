@@ -5,16 +5,25 @@ using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.Text;
 using JobManager.Data.DTO;
+using JobManager.Data.Domain;
 
 namespace JobManager.JobManagerService
 {
     [ServiceContract(CallbackContract = typeof(IJobManagerServiceCallback), SessionMode = SessionMode.Required)]
     public interface IJobManagerService
     {
-        [OperationContract]
-        TransferData RunJob(JobInputData jobInputData);
+        //[OperationContract]
+        //TransferData RunJob(JobInputData jobInputData);
 
-        //Worker RunJob(Job job);
+        [OperationContract]
+        TransferData RunJob(JobDto job);
+
+        [OperationContract]
+        TransferData Signal(WorkerDto workerDto, TransferData data);
+
+        [OperationContract]
+        void RegisterJob(JobDto job);
+
         //Job GetJob(Guid jobId);
         //List<Worker> GetRunningJobs();
         ////StopJobToken StopJob(); // Запрос на остановку задачи. Каждая задача сама определяет этот метод
@@ -25,7 +34,7 @@ namespace JobManager.JobManagerService
         //JobOutputDataBase SendSignal(Worker worker, Signal signal); // Вызвать метод Job'ы прямо во время выполнения (это общий случай метода остановки джобы)
 
         //// События
-        //void JobStarted(Job job);
+        //void JobStarted(Job job); // Была запущена периодическая задача. Тут должна быть возможность подписаться на события этой джобы и слать сигналы
         //void JobFailed(Job job);
         //void JobFinished(Job job);
 

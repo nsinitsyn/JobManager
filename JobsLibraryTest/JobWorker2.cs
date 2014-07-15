@@ -15,7 +15,7 @@ namespace JobsLibraryTest
 {
     class JobWorker2 : JobWorkerBase
     {
-        public override TransferData Run(JobInputData parameters)
+        protected override TransferData Run(object data)
         {
             Logger.Log.Info("Worker 2 start running");
 
@@ -23,11 +23,17 @@ namespace JobsLibraryTest
 
             //var p = (JobWorkerParameters)Serializator.DeserializeFromMemory(sJobData);
 
-            var p = (JobWorkerParameters) parameters.Data.GetData();
+            var p = (JobWorkerParameters) data;
 
             //Thread.Sleep(10000);
 
             return new TransferData(new JobWorkerOutput { Result = "Worker 2 - It's OK!" });
+        }
+
+        protected override TransferData Signal(object data)
+        {
+            // ...
+            return null;
         }
     }
 }

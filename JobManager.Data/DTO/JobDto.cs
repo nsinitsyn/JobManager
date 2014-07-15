@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -9,10 +8,13 @@ using System.Threading.Tasks;
 namespace JobManager.Data.DTO
 {
     [DataContract]
-    public class JobInputData
+    public class JobDto
     {
         [DataMember]
-        public string JobWorkerClassName { get; set; }
+        public Guid Id { get; set; }
+
+        [DataMember]
+        public string ClassName { get; set; }
 
         [DataMember]
         public TransferData Data { get; set; }

@@ -9,6 +9,7 @@ namespace JobManager.Data.Business
 {
     public interface IJobWorker
     {
-        TransferData Run(JobInputData parameters);
+        TransferData Run(object data);
+        TransferData Signal(object data);
     }
 }

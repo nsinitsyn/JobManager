@@ -9,148 +9,36 @@
 //------------------------------------------------------------------------------
 
 namespace Client.JobManagerReference {
-    using System.Runtime.Serialization;
-    using System;
     
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="JobInputData", Namespace="http://schemas.datacontract.org/2004/07/JobManager.Data.DTO")]
-    [System.SerializableAttribute()]
-    public partial class JobInputData : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private JobManager.Data.DTO.TransferData DataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string JobWorkerClassNameField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public JobManager.Data.DTO.TransferData Data {
-            get {
-                return this.DataField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.DataField, value) != true)) {
-                    this.DataField = value;
-                    this.RaisePropertyChanged("Data");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string JobWorkerClassName {
-            get {
-                return this.JobWorkerClassNameField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.JobWorkerClassNameField, value) != true)) {
-                    this.JobWorkerClassNameField = value;
-                    this.RaisePropertyChanged("JobWorkerClassName");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="JobEventData", Namespace="http://schemas.datacontract.org/2004/07/JobManager.Data.DTO")]
-    [System.SerializableAttribute()]
-    public partial class JobEventData : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private JobManager.Data.DTO.TransferData TransferDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string WorkerTypeField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public JobManager.Data.DTO.TransferData TransferData {
-            get {
-                return this.TransferDataField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.TransferDataField, value) != true)) {
-                    this.TransferDataField = value;
-                    this.RaisePropertyChanged("TransferData");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WorkerType {
-            get {
-                return this.WorkerTypeField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.WorkerTypeField, value) != true)) {
-                    this.WorkerTypeField = value;
-                    this.RaisePropertyChanged("WorkerType");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="JobManagerReference.IJobManagerService", CallbackContract=typeof(Client.JobManagerReference.IJobManagerServiceCallback), SessionMode=System.ServiceModel.SessionMode.Required)]
     public interface IJobManagerService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IJobManagerService/RunJob", ReplyAction="http://tempuri.org/IJobManagerService/RunJobResponse")]
-        JobManager.Data.DTO.TransferData RunJob(Client.JobManagerReference.JobInputData jobInputData);
+        JobManager.Data.DTO.TransferData RunJob(JobManager.Data.DTO.JobDto job);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IJobManagerService/RunJob", ReplyAction="http://tempuri.org/IJobManagerService/RunJobResponse")]
-        System.Threading.Tasks.Task<JobManager.Data.DTO.TransferData> RunJobAsync(Client.JobManagerReference.JobInputData jobInputData);
+        System.Threading.Tasks.Task<JobManager.Data.DTO.TransferData> RunJobAsync(JobManager.Data.DTO.JobDto job);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IJobManagerService/Signal", ReplyAction="http://tempuri.org/IJobManagerService/SignalResponse")]
+        JobManager.Data.DTO.TransferData Signal(JobManager.Data.DTO.WorkerDto workerDto, JobManager.Data.DTO.TransferData data);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IJobManagerService/Signal", ReplyAction="http://tempuri.org/IJobManagerService/SignalResponse")]
+        System.Threading.Tasks.Task<JobManager.Data.DTO.TransferData> SignalAsync(JobManager.Data.DTO.WorkerDto workerDto, JobManager.Data.DTO.TransferData data);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IJobManagerService/RegisterJob", ReplyAction="http://tempuri.org/IJobManagerService/RegisterJobResponse")]
+        void RegisterJob(JobManager.Data.DTO.JobDto job);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IJobManagerService/RegisterJob", ReplyAction="http://tempuri.org/IJobManagerService/RegisterJobResponse")]
+        System.Threading.Tasks.Task RegisterJobAsync(JobManager.Data.DTO.JobDto job);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     public interface IJobManagerServiceCallback {
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IJobManagerService/OnEvent")]
-        void OnEvent(Client.JobManagerReference.JobEventData eventData);
+        void OnEvent(JobManager.Data.DTO.JobEventDto eventDto);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -181,12 +69,28 @@ namespace Client.JobManagerReference {
                 base(callbackInstance, binding, remoteAddress) {
         }
         
-        public JobManager.Data.DTO.TransferData RunJob(Client.JobManagerReference.JobInputData jobInputData) {
-            return base.Channel.RunJob(jobInputData);
+        public JobManager.Data.DTO.TransferData RunJob(JobManager.Data.DTO.JobDto job) {
+            return base.Channel.RunJob(job);
         }
         
-        public System.Threading.Tasks.Task<JobManager.Data.DTO.TransferData> RunJobAsync(Client.JobManagerReference.JobInputData jobInputData) {
-            return base.Channel.RunJobAsync(jobInputData);
+        public System.Threading.Tasks.Task<JobManager.Data.DTO.TransferData> RunJobAsync(JobManager.Data.DTO.JobDto job) {
+            return base.Channel.RunJobAsync(job);
+        }
+        
+        public JobManager.Data.DTO.TransferData Signal(JobManager.Data.DTO.WorkerDto workerDto, JobManager.Data.DTO.TransferData data) {
+            return base.Channel.Signal(workerDto, data);
+        }
+        
+        public System.Threading.Tasks.Task<JobManager.Data.DTO.TransferData> SignalAsync(JobManager.Data.DTO.WorkerDto workerDto, JobManager.Data.DTO.TransferData data) {
+            return base.Channel.SignalAsync(workerDto, data);
+        }
+        
+        public void RegisterJob(JobManager.Data.DTO.JobDto job) {
+            base.Channel.RegisterJob(job);
+        }
+        
+        public System.Threading.Tasks.Task RegisterJobAsync(JobManager.Data.DTO.JobDto job) {
+            return base.Channel.RegisterJobAsync(job);
         }
     }
 }
