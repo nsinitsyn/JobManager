@@ -11,9 +11,9 @@ namespace JobManager.Data.Business
     {
         public event JobManagerEventHandler OnEvent;
 
-        public abstract JobOutputDataBase Run(JobInputDataBase parameters);
+        public abstract TransferData Run(JobInputData parameters);
 
-        public void SendEvent(JobEventDataBase eventData)
+        public void SendEvent(JobEventData eventData)
         {
             OnEvent(this, new JobManagerEventArgs { EventData = eventData });
         }

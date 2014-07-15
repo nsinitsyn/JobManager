@@ -42,9 +42,9 @@
   <ItemGroup>
     <Compile Include="Business\IJobWorker.cs" />
     <Compile Include="Business\JobWorkerBase.cs" />
-    <Compile Include="DTO\JobEventDataBase.cs" />
-    <Compile Include="DTO\JobInputDataBase.cs" />
-    <Compile Include="DTO\JobOutputDataBase.cs" />
+    <Compile Include="DTO\TransferData.cs" />
+    <Compile Include="DTO\JobEventData.cs" />
+    <Compile Include="DTO\JobInputData.cs" />
     <Compile Include="JobManagerEventArgs.cs" />
     <Compile Include="JobManagerEventHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

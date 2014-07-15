@@ -19,20 +19,22 @@ namespace JobsLibraryTest
 {
     public class JobWorker : JobWorkerBase
     {
-        public override JobOutputDataBase Run(JobInputDataBase parameters)
+        public override TransferData Run(JobInputData parameters)
         {
             Logger.Log.Info("Worker 1 start running");
 
-            var sJobData = parameters.SerializedJobData;
+            //var sJobData = parameters.SerializedJobData;
 
-            var p = (JobWorkerParameters)Serializator.DeserializeFromMemory(sJobData);
+            //var p = (JobWorkerParameters)Serializator.DeserializeFromMemory(sJobData);
+
+            var p = (JobWorkerParameters)parameters.Data.GetData();
 
             // Кинуть синхронное событие с параметром и получить результат
 
-            var eventData = new JobEventDataBase
+            var eventData = new JobEventData
                                 {
                                     WorkerType = typeof(JobWorker).ToString(),
-                                    SerializedData = Serializator.SerializeToMemory("eventData from Worker1")
+                                    TransferData = new TransferData("eventData from Worker1")
                                 };
 
             SendEvent(eventData);
@@ -42,15 +44,12 @@ namespace JobsLibraryTest
 
             //Thread.Sleep(10000);
 
-            return new JobOutputDataBase
-                       {
-                           SerializedResult = Serializator.SerializeToMemory(new JobWorkerOutput { Result = "Worker 1 - It's OK!" })
-                       };
+            return new TransferData(new JobWorkerOutput {Result = "Worker 1 - It's OK!"});
         }
 
-        public JobOutputDataBase SendSignal(SignalToken signalToken)
-        {
+        //public JobOutputDataBase SendSignal(SignalToken signalToken)
+        //{
             
-        }
+        //}
     }
 }

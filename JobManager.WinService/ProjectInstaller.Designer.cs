@@ -40,7 +40,6 @@
             // JobManagerInstaller
             // 
             this.JobManagerInstaller.ServiceName = "JobManager";
-            this.JobManagerInstaller.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
             // 
             // ProjectInstaller
             // 

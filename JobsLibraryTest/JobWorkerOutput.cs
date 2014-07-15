@@ -8,7 +8,7 @@ using JobManager.Data.DTO;
 namespace JobsLibraryTest
 {
     [Serializable]
-    public class JobWorkerOutput : JobOutputDataBase
+    public class JobWorkerOutput
     {
         public string Result { get; set; }
     }

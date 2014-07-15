@@ -10,12 +10,12 @@ namespace JobManager.Data.DTO
 {
     [DataContract]
     [Serializable]
-    public class JobOutputDataBase
+    public class JobEventData
     {
         [DataMember]
-        public const JobOutputDataBase NotOutputData = null;
+        public string WorkerType { get; set; }
 
         [DataMember]
-        public MemoryStream SerializedResult { get; set; }
+        public TransferData TransferData { get; set; }
     }
 }

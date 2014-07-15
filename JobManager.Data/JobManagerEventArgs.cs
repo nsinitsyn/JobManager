@@ -5,6 +5,6 @@ namespace JobManager.Data
 {
     public class JobManagerEventArgs : EventArgs
     {
-        public JobEventDataBase EventData { get; set; }
+        public JobEventData EventData { get; set; }
     }
 }

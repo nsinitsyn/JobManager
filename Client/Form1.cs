@@ -16,6 +16,7 @@ using JobManager.Data.Utilities;
 using JobsLibraryTest;
 using JobsLibraryTest.Parameters;
 using Tests.Utilities;
+using JobInputData = Client.JobManagerReference.JobInputData;
 
 namespace Client
 {
@@ -34,27 +35,27 @@ namespace Client
                                 FileName = "testJMService.txt"
                             };
 
-            var jobInput = new JobInputDataBase
+            var jobInput = new JobInputData
             {
                 JobWorkerClassName = jobName,
-                SerializedJobData = Serializator.SerializeToMemory(jobData)
+                Data = new TransferData(jobData)
             };
-            var jobInput2 = new JobInputDataBase
+            var jobInput2 = new JobInputData
             {
                 JobWorkerClassName = "JobsLibraryTest.JobWorker2",
-                SerializedJobData = Serializator.SerializeToMemory(jobData)
+                Data = new TransferData(jobData)
             };
 
             var context = new InstanceContext(new JobManagerServiceCallback());
             var client = new JobManagerServiceClient(context);
-            var task = new Task<JobOutputDataBase>(() => client.RunJob(jobInput));
+            var task = new Task<TransferData>(() => client.RunJob(jobInput));
             task.Start();
             task.ContinueWith(t =>
             {
                 // WCF: ответ не приходит, пока не выполнится callback. Но при этом на стороне wcf он выполняется как асинхронный
                 Logger.Log.Info("Пришел ответ от Worker 1");
                 var res = t.Result;
-                var r = (JobWorkerOutput)Serializator.DeserializeFromMemory(res.SerializedResult);
+                var r = (JobWorkerOutput)res.GetData();
                 var xx = "";
             });
         }

@@ -4,21 +4,21 @@
   <xs:element name="RunJob">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/JobManager.Data.DTO" minOccurs="0" name="jobInputData" nillable="true" type="q1:JobInputDataBase" />
+        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/JobManager.Data.DTO" minOccurs="0" name="jobInputData" nillable="true" type="q1:JobInputData" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="RunJobResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/JobManager.Data.DTO" minOccurs="0" name="RunJobResult" nillable="true" type="q2:JobOutputDataBase" />
+        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/JobManager.Data.DTO" minOccurs="0" name="RunJobResult" nillable="true" type="q2:TransferData" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="OnEvent">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/JobManager.Data.DTO" minOccurs="0" name="eventData" nillable="true" type="q3:JobEventDataBase" />
+        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/JobManager.Data.DTO" minOccurs="0" name="eventData" nillable="true" type="q3:JobEventData" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

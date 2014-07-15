@@ -17,7 +17,6 @@ namespace JobManager.JobManagerService
     {
         private readonly string _jobsLibraryAssemblyName;
         private const string JobsLibraryAssemblyNameKey = "JobsLibraryAssemblyName";
-        private readonly Scheduler.Scheduler _scheduler;
 
         public JobManagerService()
         {
@@ -26,13 +25,9 @@ namespace JobManager.JobManagerService
 
             // Получить все самозапускающиеся джобы из конфига
             // Получить динамически назначенные джобы из базы
-
-            //_scheduler.Start();
-            //_scheduler.DeleteJob(jobFromConfig);
-            // Зашедулить снова джобы из конфига
         }
 
-        public JobOutputDataBase RunJob(JobInputDataBase jobInputData)
+        public TransferData RunJob(JobInputData jobInputData)
         {
             var className = jobInputData.JobWorkerClassName;
             var assembly = Assembly.Load(_jobsLibraryAssemblyName);
