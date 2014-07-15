@@ -59,20 +59,23 @@ namespace Client
             //    var xx = "";
             //});
 
-
-            var task = new Task<TransferData>(() => client.RunJob(new JobDto { ClassName = jobName, Data = new TransferData(jobData) }));
-            task.Start();
-            task.ContinueWith(t =>
-            {
-                // WCF: ответ не приходит, пока не выполнится callback. Но при этом на стороне wcf он выполняется как асинхронный
-                Logger.Log.Info("Пришел ответ от Worker 1");
-                var res = t.Result;
-                var r = res.GetData() as JobWorkerOutput;
-                var xx = "";
-            });
-
+            var workerDto = client.RunJob(new JobDto { ClassName = jobName, Data = new TransferData(jobData) });
             Thread.Sleep(2000);
-            client.Signal(new WorkerDto(), new TransferData("stop"));
+            client.Signal(workerDto, new TransferData("stop"));
+
+            //var task = new Task<TransferData>(() => client.RunJob(new JobDto { ClassName = jobName, Data = new TransferData(jobData) }));
+            //task.Start();
+            //task.ContinueWith(t =>
+            //{
+            //    // WCF: ответ не приходит, пока не выполнится callback. Но при этом на стороне wcf он выполняется как асинхронный
+            //    Logger.Log.Info("Пришел ответ от Worker 1");
+            //    var res = t.Result;
+            //    var r = res.GetData() as JobWorkerOutput;
+            //    var xx = "";
+            //});
+
+            //Thread.Sleep(2000);
+            //client.Signal(new WorkerDto(), new TransferData("stop"));
         }
     }
 }

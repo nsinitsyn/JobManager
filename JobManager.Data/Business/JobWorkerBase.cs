@@ -14,8 +14,12 @@ namespace JobManager.Data.Business
         protected abstract TransferData Run(object data);
         protected abstract TransferData Signal(object data);
 
-        public TransferData RunWrap(object data)
+        private WorkerDto _workerDto;
+
+        public TransferData RunWrap(object data, WorkerDto workerDto)
         {
+            _workerDto = workerDto;
+
             var result = Run(data);
             return result;
         }
@@ -26,9 +30,16 @@ namespace JobManager.Data.Business
             return result;
         }
 
-        public void SendEvent(JobEventDto eventDto)
+        public void SendEvent(object eventData)
         {
-            OnEvent(this, new JobManagerEventArgs { EventDto = eventDto });
+            OnEvent(this, new JobManagerEventArgs
+                              {
+                                  EventDto = new JobEventDto
+                                                 {
+                                                     TransferData = new TransferData(eventData),
+                                                     Worker = _workerDto
+                                                 }
+                              });
         }
     }
 }

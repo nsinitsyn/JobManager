@@ -16,10 +16,10 @@ namespace Client.JobManagerReference {
     public interface IJobManagerService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IJobManagerService/RunJob", ReplyAction="http://tempuri.org/IJobManagerService/RunJobResponse")]
-        JobManager.Data.DTO.TransferData RunJob(JobManager.Data.DTO.JobDto job);
+        JobManager.Data.DTO.WorkerDto RunJob(JobManager.Data.DTO.JobDto job);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IJobManagerService/RunJob", ReplyAction="http://tempuri.org/IJobManagerService/RunJobResponse")]
-        System.Threading.Tasks.Task<JobManager.Data.DTO.TransferData> RunJobAsync(JobManager.Data.DTO.JobDto job);
+        System.Threading.Tasks.Task<JobManager.Data.DTO.WorkerDto> RunJobAsync(JobManager.Data.DTO.JobDto job);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IJobManagerService/Signal", ReplyAction="http://tempuri.org/IJobManagerService/SignalResponse")]
         JobManager.Data.DTO.TransferData Signal(JobManager.Data.DTO.WorkerDto workerDto, JobManager.Data.DTO.TransferData data);
@@ -69,11 +69,11 @@ namespace Client.JobManagerReference {
                 base(callbackInstance, binding, remoteAddress) {
         }
         
-        public JobManager.Data.DTO.TransferData RunJob(JobManager.Data.DTO.JobDto job) {
+        public JobManager.Data.DTO.WorkerDto RunJob(JobManager.Data.DTO.JobDto job) {
             return base.Channel.RunJob(job);
         }
         
-        public System.Threading.Tasks.Task<JobManager.Data.DTO.TransferData> RunJobAsync(JobManager.Data.DTO.JobDto job) {
+        public System.Threading.Tasks.Task<JobManager.Data.DTO.WorkerDto> RunJobAsync(JobManager.Data.DTO.JobDto job) {
             return base.Channel.RunJobAsync(job);
         }
         

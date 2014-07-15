@@ -33,7 +33,7 @@ namespace JobManager.JobManagerService
             // Получить динамически назначенные джобы из базы
         }
 
-        public TransferData RunJob(JobDto job)
+        public WorkerDto RunJob(JobDto job)
         {
             var className = job.ClassName;
             var assembly = Assembly.Load(_jobsLibraryAssemblyName);
@@ -44,7 +44,7 @@ namespace JobManager.JobManagerService
             var instance = instanceHandle as JobWorkerBase;
             if (instance == null)
             {
-                throw new InvalidOperationException(string.Format("Класс {0} не реализует протокол IJobWorkerBase", className));
+                throw new InvalidOperationException(string.Format("Класс {0} не наследует класс JobWorkerBase", className));
             }
             instance.OnEvent += OnEvent;
 
@@ -52,43 +52,66 @@ namespace JobManager.JobManagerService
                              {
                                  Id = Guid.NewGuid(),
                                  Job = null,
-                                 Instance = instance
+                                 Instance = instance,
+                                 OperationContext = OperationContext.Current
                              };
             _workers.Add(worker);
             job.Id = Guid.NewGuid();
+
             var workerDto = new WorkerDto
                                 {
                                     Id = worker.Id,
                                     JobDto = job
                                 };
 
-            try
-            {
-                return instance.RunWrap(job.Data.GetData());
-            }
-            catch
-            {
-                // ?? Надо уведомить об исключении клиента
-                // ...
-                return null;
-            }
-            finally
-            {
-                _workers.Remove(worker);
-            }
+            var task = new Task<TransferData>(() => instance.RunWrap(job.Data.GetData(), workerDto));
+            task.ContinueWith(t =>
+                                  {
+                                      var result = t.Result;
+                                      OnEvent(null, new JobManagerEventArgs
+                                                        {
+                                                            EventDto = new JobEventDto
+                                                                           {
+                                                                               IsReturnResult = true,
+                                                                               TransferData = result,
+                                                                               Worker = workerDto
+                                                                           }
+                                                        });
+                                  });
+            task.Start();
+
+            return workerDto;
+
+            // !!! Нужно гарантировать удаление воркера из _workers при завершении и исключении
+            // !!! Кидать событие при Current = null
+
+            //try
+            //{
+            //    return workerDto;
+            //}
+            //catch
+            //{
+            //    // ?? Надо уведомить об исключении клиента
+            //    // ...
+            //    return null;
+            //}
+            //finally
+            //{
+            //    _workers.Remove(worker);
+            //}
         }
 
         public TransferData Signal(WorkerDto workerDto, TransferData data)
         {
             // ?? ПРОБЛЕМА: Что если Run завершился раньше функции Signal ?
 
-            //var worker = _workers.SingleOrDefault(w => w.Id == workerDto.Id);
-            //if (worker == null)
-            //{
-            //    throw new ArgumentException("Worker not found");
-            //}
+            var worker = GetWorkerAtId(workerDto.Id);
+            if (worker == null)
+            {
+                throw new ArgumentException("Worker not found");
+            }
 
-            var worker = _workers[0];
+            //var worker = _workers[0];
 
             var instance = worker.Instance;
 
@@ -118,15 +141,32 @@ namespace JobManager.JobManagerService
 
         private void OnEvent(object sender, JobManagerEventArgs eventArgs)
         {
-            Callback.OnEvent(eventArgs.EventDto);
+            var workerId = eventArgs.EventDto.Worker.Id;
+
+            var worker = GetWorkerAtId(workerId);
+            if (worker == null)
+            {
+                throw new ArgumentException("Worker not found");
+            }
+
+            worker.OperationContext.GetCallbackChannel<IJobManagerServiceCallback>().OnEvent(eventArgs.EventDto);
+
+            //Callback.OnEvent(eventArgs.EventDto);
         }
 
-        private IJobManagerServiceCallback Callback
+        private Worker GetWorkerAtId(Guid workerId)
         {
-            get
-            {
-                return OperationContext.Current.GetCallbackChannel<IJobManagerServiceCallback>();
-            }
+            var worker = _workers.SingleOrDefault(w => w.Id == workerId);
+            return worker;
         }
+
+        //private IJobManagerServiceCallback Callback
+        //{
+        //    get
+        //    {
+        //        // здесь нужно выбрать контекст по воркеру
+        //        return _operationContext.GetCallbackChannel<IJobManagerServiceCallback>();
+        //    }
+        //}
     }
 }

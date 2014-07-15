@@ -16,7 +16,7 @@ namespace JobManager.JobManagerService
         //TransferData RunJob(JobInputData jobInputData);
 
         [OperationContract]
-        TransferData RunJob(JobDto job);
+        WorkerDto RunJob(JobDto job);
 
         [OperationContract]
         TransferData Signal(WorkerDto workerDto, TransferData data);

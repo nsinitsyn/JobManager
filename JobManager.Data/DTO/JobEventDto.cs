@@ -10,10 +10,18 @@ namespace JobManager.Data.DTO
     [DataContract]
     public class JobEventDto
     {
+        public JobEventDto()
+        {
+            IsReturnResult = false;
+        }
+
         [DataMember]
         public WorkerDto Worker { get; set; }
 
         [DataMember]
         public TransferData TransferData { get; set; }
+
+        [DataMember]
+        public bool IsReturnResult { get; set; }
     }
 }

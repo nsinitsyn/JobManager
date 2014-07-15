@@ -21,7 +21,14 @@ namespace Client
 
             if (eventDto.Worker != null) // eventDto.Worker.Id == "workerConcreteId"
             {
-                var data = (string)eventDto.TransferData.GetData();
+                if (eventDto.IsReturnResult)
+                {
+                    var returnResult = eventDto.TransferData.GetData() as JobWorkerOutput;                    
+                }
+                else
+                {
+                    var data = (string)eventDto.TransferData.GetData();                                        
+                }
             }
 
             //if (eventData.WorkerType == typeof(JobWorker).ToString())

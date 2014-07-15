@@ -42,13 +42,14 @@ namespace JobsLibraryTest
             {
                 if (Stop)
                 {
+                    SendEvent("Worker1 has been stopped");
                     break;
                 }
 
                 Thread.Sleep(5000);
             }
 
-            return null;
+            return new TransferData(new JobWorkerOutput { Result = "Worker 1 - It's OK!" });
         }
 
         protected override TransferData Signal(object data)

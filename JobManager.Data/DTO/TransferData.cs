@@ -17,12 +17,12 @@ namespace JobManager.Data.DTO
 
         public TransferData(object data)
         {
-            SerializedData = Serializator.SerializeToMemory(data);
+            SerializedData = data != null ? Serializator.SerializeToMemory(data) : null;
         }
 
         public object GetData()
         {
-            return Serializator.DeserializeFromMemory(SerializedData);
+            return SerializedData != null ? Serializator.DeserializeFromMemory(SerializedData) : null;
         }
     }
 }
