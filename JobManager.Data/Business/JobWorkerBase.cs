@@ -10,6 +10,7 @@ namespace JobManager.Data.Business
     public abstract class JobWorkerBase
     {
         public event JobManagerEventHandler OnEvent;
+        public event JobManagerEventSyncHandler OnEventSync;
 
         protected abstract TransferData Run(object data);
         protected abstract TransferData Signal(object data);
@@ -40,6 +41,20 @@ namespace JobManager.Data.Business
                                                      Worker = _workerDto
                                                  }
                               });
+        }
+
+        public TransferData SendEventSync(object eventData)
+        {
+            var result = OnEventSync(this, new JobManagerEventArgs
+                                               {
+                                                   EventDto = new JobEventDto
+                                                                  {
+                                                                      TransferData = new TransferData(eventData),
+                                                                      Worker = _workerDto
+                                                                  }
+                                               });
+
+            return result;
         }
     }
 }

@@ -39,6 +39,9 @@ namespace Client.JobManagerReference {
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IJobManagerService/OnEvent")]
         void OnEvent(JobManager.Data.DTO.JobEventDto eventDto);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IJobManagerService/OnEventSync", ReplyAction="http://tempuri.org/IJobManagerService/OnEventSyncResponse")]
+        JobManager.Data.DTO.TransferData OnEventSync(JobManager.Data.DTO.JobEventDto eventDto);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]

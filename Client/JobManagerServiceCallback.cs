@@ -16,18 +16,16 @@ namespace Client
     {
         public void OnEvent(JobEventDto eventDto)
         {
-            // Общий для всех задач. Нужно определить тип задачи и тип события
-            // ...
-
             if (eventDto.Worker != null) // eventDto.Worker.Id == "workerConcreteId"
             {
                 if (eventDto.IsReturnResult)
                 {
-                    var returnResult = eventDto.TransferData.GetData() as JobWorkerOutput;                    
+                    var returnResult = eventDto.TransferData.GetData() as JobWorkerOutput;           
+                    Thread.Sleep(8000);
                 }
                 else
                 {
-                    var data = (string)eventDto.TransferData.GetData();                                        
+                    var data = (string)eventDto.TransferData.GetData();
                 }
             }
 
@@ -41,6 +39,25 @@ namespace Client
             //}
 
             //Thread.Sleep(10000);
+        }
+
+        public TransferData OnEventSync(JobEventDto eventDto)
+        {
+            if (eventDto.Worker != null)
+            {
+                if (eventDto.IsReturnResult)
+                {
+                    var returnResult = eventDto.TransferData.GetData() as JobWorkerOutput;
+                    Thread.Sleep(8000);
+                    return null;
+                }
+                else
+                {
+                    var data = (string)eventDto.TransferData.GetData();
+                    return null;
+                }
+            }
+            return null;
         }
     }
 }

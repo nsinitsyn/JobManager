@@ -47,6 +47,7 @@ namespace JobManager.JobManagerService
                 throw new InvalidOperationException(string.Format("Класс {0} не наследует класс JobWorkerBase", className));
             }
             instance.OnEvent += OnEvent;
+            instance.OnEventSync += OnEventSync;
 
             var worker = new Worker
                              {
@@ -67,48 +68,47 @@ namespace JobManager.JobManagerService
             var task = new Task<TransferData>(() => instance.RunWrap(job.Data.GetData(), workerDto));
             task.ContinueWith(t =>
                                   {
-                                      var result = t.Result;
-                                      OnEvent(null, new JobManagerEventArgs
-                                                        {
-                                                            EventDto = new JobEventDto
-                                                                           {
-                                                                               IsReturnResult = true,
-                                                                               TransferData = result,
-                                                                               Worker = workerDto
-                                                                           }
-                                                        });
+                                      var ex = t.Exception;
+                                      if (ex != null)
+                                      {
+                                          GetWorkerAtId(worker.Id).Completed = true;
+                                      }
+                                      else
+                                      {
+                                          var result = t.Result;
+                                          OnEvent(null, new JobManagerEventArgs
+                                          {
+                                              EventDto = new JobEventDto
+                                              {
+                                                  IsReturnResult = true,
+                                                  TransferData = result,
+                                                  Worker = workerDto
+                                              }
+                                          });
+                                          GetWorkerAtId(worker.Id).Completed = true;
+                                      }
                                   });
+            
             task.Start();
 
             return workerDto;
 
             // !!! Нужно гарантировать удаление воркера из _workers при завершении и исключении
-            // !!! Кидать событие при Current = null
-
-            //try
-            //{
-            //    return workerDto;
-            //}
-            //catch
-            //{
-            //    // ?? Надо уведомить об исключении клиента
-            //    // ...
-            //    return null;
-            //}
-            //finally
-            //{
-            //    _workers.Remove(worker);
-            //}
         }
 
         public TransferData Signal(WorkerDto workerDto, TransferData data)
         {
             // ?? ПРОБЛЕМА: Что если Run завершился раньше функции Signal ?
+            // ?? Что если слать сигнал после получения returnResult через событие
 
             var worker = GetWorkerAtId(workerDto.Id);
             if (worker == null)
             {
                 throw new ArgumentException("Worker not found");
+            }
+            if (worker.Completed)
+            {
+                throw new InvalidOperationException("Worker has been completed");                
             }
 
             //var worker = _workers[0];
@@ -122,7 +122,7 @@ namespace JobManager.JobManagerService
             catch
             {
                 // ??? Надо бы уведомить клиента о необработанном исключении и закрыть воркер
-                //_workers.Remove(worker);
+                // GetWorkerAtId(worker.Id).Completed = true;
                 return null;
             }
         }
@@ -142,16 +142,32 @@ namespace JobManager.JobManagerService
         private void OnEvent(object sender, JobManagerEventArgs eventArgs)
         {
             var workerId = eventArgs.EventDto.Worker.Id;
-
             var worker = GetWorkerAtId(workerId);
             if (worker == null)
             {
                 throw new ArgumentException("Worker not found");
             }
 
-            worker.OperationContext.GetCallbackChannel<IJobManagerServiceCallback>().OnEvent(eventArgs.EventDto);
+            GetCallbackAtWorker(worker).OnEvent(eventArgs.EventDto);
+        }
 
-            //Callback.OnEvent(eventArgs.EventDto);
+        private TransferData OnEventSync(object sender, JobManagerEventArgs eventArgs)
+        {
+            var workerId = eventArgs.EventDto.Worker.Id;
+            var worker = GetWorkerAtId(workerId);
+            if (worker == null)
+            {
+                throw new ArgumentException("Worker not found");
+            }
+
+            var eventResult = GetCallbackAtWorker(worker).OnEventSync(eventArgs.EventDto);
+            return eventResult;
+        }
+
+        private IJobManagerServiceCallback GetCallbackAtWorker(Worker worker)
+        {
+            var context = worker.OperationContext.GetCallbackChannel<IJobManagerServiceCallback>();
+            return context;
         }
 
         private Worker GetWorkerAtId(Guid workerId)
@@ -159,14 +175,5 @@ namespace JobManager.JobManagerService
             var worker = _workers.SingleOrDefault(w => w.Id == workerId);
             return worker;
         }
-
-        //private IJobManagerServiceCallback Callback
-        //{
-        //    get
-        //    {
-        //        // здесь нужно выбрать контекст по воркеру
-        //        return _operationContext.GetCallbackChannel<IJobManagerServiceCallback>();
-        //    }
-        //}
     }
 }

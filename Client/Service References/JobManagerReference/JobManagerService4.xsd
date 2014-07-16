@@ -49,4 +49,18 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+  <xs:element name="OnEventSync">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q8="http://schemas.datacontract.org/2004/07/JobManager.Data.DTO" minOccurs="0" name="eventDto" nillable="true" type="q8:JobEventDto" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OnEventSyncResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q9="http://schemas.datacontract.org/2004/07/JobManager.Data.DTO" minOccurs="0" name="OnEventSyncResult" nillable="true" type="q9:TransferData" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
 </xs:schema>

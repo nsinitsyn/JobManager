@@ -47,6 +47,8 @@ namespace JobsLibraryTest
                 }
 
                 Thread.Sleep(5000);
+
+                //throw new InvalidOperationException("bad luck :(");
             }
 
             return new TransferData(new JobWorkerOutput { Result = "Worker 1 - It's OK!" });
