@@ -42,7 +42,8 @@ namespace JobsLibraryTest
             {
                 if (Stop)
                 {
-                    SendEvent("Worker1 has been stopped");
+                    //var result = SendEventSync("Worker1 has been stopped").GetData();
+                    //SendEvent("Worker1 has been stopped");
                     break;
                 }
 
@@ -57,6 +58,7 @@ namespace JobsLibraryTest
         protected override TransferData Signal(object data)
         {
             var d = (string) data;
+            Thread.Sleep(5000);
             if (d == "stop")
             {
                 Stop = true;

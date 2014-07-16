@@ -16,16 +16,17 @@ namespace Client
     {
         public void OnEvent(JobEventDto eventDto)
         {
-            if (eventDto.Worker != null) // eventDto.Worker.Id == "workerConcreteId"
+            if (eventDto.Worker.Id == WorkersKeeper.Worker1) // eventDto.Worker.Id == "workerConcreteId"
             {
                 if (eventDto.IsReturnResult)
                 {
                     var returnResult = eventDto.TransferData.GetData() as JobWorkerOutput;           
-                    Thread.Sleep(8000);
+                    //Thread.Sleep(8000);
                 }
                 else
                 {
                     var data = (string)eventDto.TransferData.GetData();
+                    //Thread.Sleep(7000);
                 }
             }
 
@@ -43,19 +44,13 @@ namespace Client
 
         public TransferData OnEventSync(JobEventDto eventDto)
         {
-            if (eventDto.Worker != null)
+            // returnResult приходит только асинхронно
+
+            if (eventDto.Worker.Id == WorkersKeeper.Worker1)
             {
-                if (eventDto.IsReturnResult)
-                {
-                    var returnResult = eventDto.TransferData.GetData() as JobWorkerOutput;
-                    Thread.Sleep(8000);
-                    return null;
-                }
-                else
-                {
-                    var data = (string)eventDto.TransferData.GetData();
-                    return null;
-                }
+                var data = (string)eventDto.TransferData.GetData();
+                //Thread.Sleep(7000);
+                return new TransferData("EventSync result");
             }
             return null;
         }

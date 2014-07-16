@@ -12,9 +12,6 @@ namespace JobManager.JobManagerService
     [ServiceContract(CallbackContract = typeof(IJobManagerServiceCallback), SessionMode = SessionMode.Required)]
     public interface IJobManagerService
     {
-        //[OperationContract]
-        //TransferData RunJob(JobInputData jobInputData);
-
         [OperationContract]
         WorkerDto RunJob(JobDto job);
 
@@ -32,6 +29,7 @@ namespace JobManager.JobManagerService
         //void SetJobToNonExecutable(Job job); // Пометить ее как неисполняемую с сохранением всех настроек
         //void DeleteJob(); // Удаляет джобу из базы
         //JobOutputDataBase SendSignal(Worker worker, Signal signal); // Вызвать метод Job'ы прямо во время выполнения (это общий случай метода остановки джобы)
+        // void ChangeJob(); // Изменить настройки (например триггеры джобе; в т.ч. той, которая регилась через конфиг - в этом случае нужно и в конфиге поменять триггеры)
 
         //// События
         //void JobStarted(Job job); // Была запущена периодическая задача. Тут должна быть возможность подписаться на события этой джобы и слать сигналы

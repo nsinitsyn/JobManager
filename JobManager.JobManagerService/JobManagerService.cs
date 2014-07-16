@@ -30,7 +30,7 @@ namespace JobManager.JobManagerService
             _timer = new Timer(TimerTick, null, 0, 1000);
 
             // Получить все самозапускающиеся джобы из конфига
-            // Получить динамически назначенные джобы из базы
+            // Получить зарегистрированные джобы из базы
         }
 
         public WorkerDto RunJob(JobDto job)
