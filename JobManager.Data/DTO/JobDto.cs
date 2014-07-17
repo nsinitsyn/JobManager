@@ -18,5 +18,8 @@ namespace JobManager.Data.DTO
 
         [DataMember]
         public TransferData Data { get; set; }
+
+        [DataMember]
+        public List<TriggerDto> Triggers { get; set; }
     }
 }

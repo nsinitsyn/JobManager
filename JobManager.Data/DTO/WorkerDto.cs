@@ -9,6 +9,6 @@ namespace JobManager.Data.DTO
     public class WorkerDto
     {
         public Guid Id { get; set; }
-        public JobDto JobDto { get; set; }
+        public Guid JobId { get; set; }
     }
 }

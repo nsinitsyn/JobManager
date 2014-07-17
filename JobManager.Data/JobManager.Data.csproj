@@ -30,7 +30,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core">
+      <HintPath>..\packages\Castle.Core.3.3.0\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor">
+      <HintPath>..\packages\Castle.Windsor.3.3.0\lib\net45\Castle.Windsor.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
@@ -42,6 +55,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Business\JobWorkerBase.cs" />
+    <Compile Include="Database\DataContext.cs" />
+    <Compile Include="Database\DbManager.cs" />
+    <Compile Include="Database\Entities\BaseEntity.cs" />
+    <Compile Include="Database\Entities\JobDb.cs" />
+    <Compile Include="Database\Entities\TriggerDb.cs" />
+    <Compile Include="Database\Entities\WorkerDb.cs" />
+    <Compile Include="Database\Repositories\Abstract\BaseRepository.cs" />
+    <Compile Include="Database\Repositories\Abstract\Interfaces\IBaseRepository.cs" />
+    <Compile Include="Database\Repositories\Abstract\Interfaces\IJobRepository.cs" />
+    <Compile Include="Database\Repositories\JobRepository.cs" />
+    <Compile Include="Database\UnitOfWork\IUnitOfWork.cs" />
+    <Compile Include="Database\UnitOfWork\UnitOfWork.cs" />
     <Compile Include="Domain\Job.cs" />
     <Compile Include="Domain\Trigger.cs" />
     <Compile Include="Domain\Worker.cs" />
@@ -49,10 +74,17 @@
     <Compile Include="DTO\JobEventDto.cs" />
     <Compile Include="DTO\TransferData.cs" />
     <Compile Include="DTO\WorkerDto.cs" />
+    <Compile Include="Ioc\DataInstaller.cs" />
+    <Compile Include="Ioc\RepositoriesInstaller.cs" />
     <Compile Include="JobManagerEventArgs.cs" />
     <Compile Include="JobManagerEventHandler.cs" />
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\Serializator.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

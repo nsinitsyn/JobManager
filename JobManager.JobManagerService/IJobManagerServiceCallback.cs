@@ -15,5 +15,8 @@ namespace JobManager.JobManagerService
 
         [OperationContract(IsOneWay = false)]
         TransferData OnEventSync(JobEventDto eventDto);
+
+        [OperationContract(IsOneWay = true)]
+        void WorkerWasStarted(WorkerDto worker);
     }
 }

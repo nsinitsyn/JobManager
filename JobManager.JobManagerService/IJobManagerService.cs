@@ -19,7 +19,7 @@ namespace JobManager.JobManagerService
         TransferData Signal(WorkerDto workerDto, TransferData data);
 
         [OperationContract]
-        void RegisterJob(JobDto job);
+        Guid RegisterJob(JobDto job);
 
         //Job GetJob(Guid jobId);
         //List<Worker> GetRunningJobs();

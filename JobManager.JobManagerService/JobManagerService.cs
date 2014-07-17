@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -11,23 +13,30 @@ using System.Threading.Tasks;
 using JobManager.Data;
 using JobManager.Data.Business;
 using JobManager.Data.DTO;
+using JobManager.Data.Database.Entities;
+using JobManager.Data.Database.Repositories.Abstract.Interfaces;
+using JobManager.Data.Database.UnitOfWork;
 using JobManager.Data.Domain;
+using JobManager.Data.Mappers;
+using JobManager.JobManagerService.Ioc;
+using JobManager.JobManagerService.Quartz;
+using Quartz;
+using Quartz.Impl;
+using QuartzLib = Quartz;
 
 namespace JobManager.JobManagerService
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Multiple)]
     public class JobManagerService : IJobManagerService
     {
-        private readonly string _jobsLibraryAssemblyName;
-        private const string JobsLibraryAssemblyNameKey = "JobsLibraryAssemblyName";
         private readonly List<Worker> _workers = new List<Worker>();
-        private Timer _timer;
+        private readonly IScheduler _scheduler;
 
         public JobManagerService()
         {
-            _jobsLibraryAssemblyName = ConfigurationManager.AppSettings[JobsLibraryAssemblyNameKey];
-
-            _timer = new Timer(TimerTick, null, 0, 1000);
+            ISchedulerFactory schedFact = new StdSchedulerFactory();
+            _scheduler = schedFact.GetScheduler();
+            _scheduler.Start();
 
             // Получить все самозапускающиеся джобы из конфига
             // Получить зарегистрированные джобы из базы
@@ -35,8 +44,13 @@ namespace JobManager.JobManagerService
 
         public WorkerDto RunJob(JobDto job)
         {
+            if (job.Id == Guid.Empty)
+            {
+                job.Id = Guid.NewGuid();
+            }
+
             var className = job.ClassName;
-            var assembly = Assembly.Load(_jobsLibraryAssemblyName);
+            var assembly = Assembly.Load(JobManagerSettings.JobsLibraryAssemblyName);
             var classType = assembly.GetType(className);
 
             var instanceHandle = Activator.CreateInstance(classType);
@@ -52,18 +66,13 @@ namespace JobManager.JobManagerService
             var worker = new Worker
                              {
                                  Id = Guid.NewGuid(),
-                                 Job = null,
+                                 Job = JobMapper.Mapper.DtoToDomain(job),
                                  Instance = instance,
                                  OperationContext = OperationContext.Current
                              };
             _workers.Add(worker);
-            job.Id = Guid.NewGuid();
 
-            var workerDto = new WorkerDto
-                                {
-                                    Id = worker.Id,
-                                    JobDto = job
-                                };
+            var workerDto = WorkerMapper.Mapper.DomainToDto(worker);
 
             var task = new Task<TransferData>(() => instance.RunWrap(job.Data.GetData(), workerDto));
             task.ContinueWith(t =>
@@ -92,8 +101,6 @@ namespace JobManager.JobManagerService
             task.Start();
 
             return workerDto;
-
-            // !!! Нужно гарантировать удаление воркера из _workers при завершении и исключении
         }
 
         public TransferData Signal(WorkerDto workerDto, TransferData data)
@@ -108,10 +115,8 @@ namespace JobManager.JobManagerService
             }
             if (worker.Completed)
             {
-                throw new InvalidOperationException("Worker has been completed");                
+                throw new InvalidOperationException("Worker has been completed");
             }
-
-            //var worker = _workers[0];
 
             var instance = worker.Instance;
 
@@ -127,16 +132,41 @@ namespace JobManager.JobManagerService
             }
         }
 
-        public void RegisterJob(JobDto job)
+        public Guid RegisterJob(JobDto job)
         {
-            
-        }
+            if (job.Id == Guid.Empty)
+            {
+                job.Id = Guid.NewGuid();
+            }
 
-        private void TimerTick(object state)
-        {
-            // поскольку джоба запустилась сама, то ей некуда слать события
-            var worker = new Worker();
-            //var s = worker.EventSubscribers[0];
+            var jobRepository = IocContainer.Container.Resolve<IJobRepository>();
+            var unitOfWork = IocContainer.Container.Resolve<IUnitOfWork>();
+            var jobDb = JobMapper.Mapper.DtoToDb(job);
+            jobRepository.Add(jobDb);
+            unitOfWork.Commit();
+
+            IDictionary jobDataDictionary = new Dictionary<string, object> { { "jobId", job.Id.ToString() }};
+
+            var jobDetail = JobBuilder.Create<JobsDistributor>()
+                .WithIdentity(Guid.NewGuid().ToString())
+                .SetJobData(new JobDataMap(jobDataDictionary))
+                .Build();
+
+            var triggers = new QuartzLib.Collection.HashSet<ITrigger>();
+
+            foreach (var jobTrigger in job.Triggers)
+            {
+                var trigger = TriggerBuilder.Create()
+                    .WithIdentity(Guid.NewGuid().ToString())
+                    .WithCronSchedule(jobTrigger.Cron)
+                    .Build();
+
+                triggers.Add(trigger);
+            }
+            
+            _scheduler.ScheduleJob(jobDetail, triggers, true);
+
+            return job.Id;
         }
 
         private void OnEvent(object sender, JobManagerEventArgs eventArgs)

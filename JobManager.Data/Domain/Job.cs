@@ -9,6 +9,12 @@ namespace JobManager.Data.Domain
 {
     public class Job
     {
+        public Job()
+        {
+            Workers = new List<Worker>();
+            Triggers = new List<Trigger>();
+        }
+
         public Guid Id { get; set; }
         public string ClassName { get; set; }
         public object Data { get; set; }

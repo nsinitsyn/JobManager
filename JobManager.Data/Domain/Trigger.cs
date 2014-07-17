@@ -8,5 +8,6 @@ namespace JobManager.Data.Domain
 {
     public class Trigger
     {
+        public string Cron { get; set; }
     }
 }
