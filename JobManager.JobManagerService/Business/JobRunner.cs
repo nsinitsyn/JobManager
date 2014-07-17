@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -8,8 +9,15 @@ using System.Threading.Tasks;
 using JobManager.Data;
 using JobManager.Data.Business;
 using JobManager.Data.DTO;
+using JobManager.Data.Database.Repositories.Abstract.Interfaces;
+using JobManager.Data.Database.UnitOfWork;
 using JobManager.Data.Domain;
 using JobManager.Data.Mappers;
+using JobManager.JobManagerService.Ioc;
+using JobManager.JobManagerService.Quartz;
+using Quartz;
+using Quartz.Impl;
+using QuartzLib = Quartz;
 
 namespace JobManager.JobManagerService.Business
 {
@@ -23,6 +31,17 @@ namespace JobManager.JobManagerService.Business
         }
 
         private readonly List<Worker> _workers = new List<Worker>();
+        private readonly IScheduler _scheduler;
+
+        public JobRunner()
+        {
+            ISchedulerFactory schedFact = new StdSchedulerFactory();
+            _scheduler = schedFact.GetScheduler();
+            _scheduler.Start();
+
+            // Получить все самозапускающиеся джобы из конфига
+            // Получить зарегистрированные джобы из базы
+        }
 
         public Worker RunJob(Job job)
         {
@@ -54,7 +73,10 @@ namespace JobManager.JobManagerService.Business
             };
             _workers.Add(worker);
 
-            var task = new Task<TransferData>(() => instance.RunWrap(job.Data, worker));
+            // ГОВНОКОД!!!1 Никаких DTO на уровне логики быть не должно (здесь это ради улучшения быстродействия, чтобы не было лишних преобразований)
+            var workerDto = WorkerMapper.Mapper.DomainToDto(worker);
+
+            var task = new Task<TransferData>(() => instance.RunWrap(job.Data, workerDto));
             task.ContinueWith(t =>
                                   {
                                       var ex = t.Exception;
@@ -81,6 +103,72 @@ namespace JobManager.JobManagerService.Business
             task.Start();
 
             return worker;
+        }
+
+        public TransferData Signal(WorkerDto workerDto, TransferData data)
+        {
+            // ?? ПРОБЛЕМА: Что если Run завершился раньше функции Signal ?
+            // ?? Что если слать сигнал после получения returnResult через событие
+
+            var worker = GetWorkerAtId(workerDto.Id);
+            if (worker == null)
+            {
+                throw new ArgumentException("Worker not found");
+            }
+            if (worker.Completed)
+            {
+                throw new InvalidOperationException("Worker has been completed");
+            }
+
+            var instance = worker.Instance;
+
+            try
+            {
+                return instance.SignalWrap(data.GetData());
+            }
+            catch
+            {
+                // ??? Надо бы уведомить клиента о необработанном исключении и закрыть воркер
+                // GetWorkerAtId(worker.Id).Completed = true;
+                return null;
+            }
+        }
+
+        public Guid RegisterJob(Job job)
+        {
+            if (job.Id == Guid.Empty)
+            {
+                job.Id = Guid.NewGuid();
+            }
+
+            var jobRepository = IocContainer.Container.Resolve<IJobRepository>();
+            var unitOfWork = IocContainer.Container.Resolve<IUnitOfWork>();
+            var jobDb = JobMapper.Mapper.DomainToDb(job);
+            jobRepository.Add(jobDb);
+            unitOfWork.Commit();
+
+            IDictionary jobDataDictionary = new Dictionary<string, object> { { "jobId", job.Id.ToString() } };
+
+            var jobDetail = JobBuilder.Create<JobsDistributor>()
+                .WithIdentity(Guid.NewGuid().ToString())
+                .SetJobData(new JobDataMap(jobDataDictionary))
+                .Build();
+
+            var triggers = new QuartzLib.Collection.HashSet<ITrigger>();
+
+            foreach (var jobTrigger in job.Triggers)
+            {
+                var trigger = TriggerBuilder.Create()
+                    .WithIdentity(Guid.NewGuid().ToString())
+                    .WithCronSchedule(jobTrigger.Cron)
+                    .Build();
+
+                triggers.Add(trigger);
+            }
+
+            _scheduler.ScheduleJob(jobDetail, triggers, true);
+
+            return job.Id;
         }
 
         private void OnEvent(object sender, JobManagerEventArgs eventArgs)

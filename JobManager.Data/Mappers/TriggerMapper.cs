@@ -25,7 +25,11 @@ namespace JobManager.Data.Mappers
 
         public override TriggerDb DomainToDb(Trigger trigger)
         {
-            throw new NotImplementedException();
+            var triggerDb = new TriggerDb
+                                {
+                                    Cron = trigger.Cron
+                                };
+            return triggerDb;
         }
 
         public override TriggerDto DomainToDto(Trigger trigger)

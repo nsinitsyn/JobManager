@@ -18,6 +18,7 @@ using JobManager.Data.Database.Repositories.Abstract.Interfaces;
 using JobManager.Data.Database.UnitOfWork;
 using JobManager.Data.Domain;
 using JobManager.Data.Mappers;
+using JobManager.JobManagerService.Business;
 using JobManager.JobManagerService.Ioc;
 using JobManager.JobManagerService.Quartz;
 using Quartz;
@@ -29,17 +30,11 @@ namespace JobManager.JobManagerService
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Multiple)]
     public class JobManagerService : IJobManagerService
     {
-        private readonly List<Worker> _workers = new List<Worker>();
-        private readonly IScheduler _scheduler;
+        private readonly JobRunner _runner;
 
         public JobManagerService()
         {
-            ISchedulerFactory schedFact = new StdSchedulerFactory();
-            _scheduler = schedFact.GetScheduler();
-            _scheduler.Start();
-
-            // Получить все самозапускающиеся джобы из конфига
-            // Получить зарегистрированные джобы из базы
+            _runner = new JobRunner();
         }
 
         public WorkerDto RunJob(JobDto job)
@@ -132,78 +127,81 @@ namespace JobManager.JobManagerService
             }
         }
 
-        public Guid RegisterJob(JobDto job)
+        public Guid RegisterJob(JobDto jobDto)
         {
-            if (job.Id == Guid.Empty)
-            {
-                job.Id = Guid.NewGuid();
-            }
+            var job = JobMapper.Mapper.DtoToDomain(jobDto);
+            var jobId = _runner.RegisterJob(job);
 
-            var jobRepository = IocContainer.Container.Resolve<IJobRepository>();
-            var unitOfWork = IocContainer.Container.Resolve<IUnitOfWork>();
-            var jobDb = JobMapper.Mapper.DtoToDb(job);
-            jobRepository.Add(jobDb);
-            unitOfWork.Commit();
+            //if (job.Id == Guid.Empty)
+            //{
+            //    job.Id = Guid.NewGuid();
+            //}
 
-            IDictionary jobDataDictionary = new Dictionary<string, object> { { "jobId", job.Id.ToString() }};
+            //var jobRepository = IocContainer.Container.Resolve<IJobRepository>();
+            //var unitOfWork = IocContainer.Container.Resolve<IUnitOfWork>();
+            //var jobDb = JobMapper.Mapper.DtoToDb(job);
+            //jobRepository.Add(jobDb);
+            //unitOfWork.Commit();
 
-            var jobDetail = JobBuilder.Create<JobsDistributor>()
-                .WithIdentity(Guid.NewGuid().ToString())
-                .SetJobData(new JobDataMap(jobDataDictionary))
-                .Build();
+            //IDictionary jobDataDictionary = new Dictionary<string, object> { { "jobId", job.Id.ToString() }};
 
-            var triggers = new QuartzLib.Collection.HashSet<ITrigger>();
+            //var jobDetail = JobBuilder.Create<JobsDistributor>()
+            //    .WithIdentity(Guid.NewGuid().ToString())
+            //    .SetJobData(new JobDataMap(jobDataDictionary))
+            //    .Build();
 
-            foreach (var jobTrigger in job.Triggers)
-            {
-                var trigger = TriggerBuilder.Create()
-                    .WithIdentity(Guid.NewGuid().ToString())
-                    .WithCronSchedule(jobTrigger.Cron)
-                    .Build();
+            //var triggers = new QuartzLib.Collection.HashSet<ITrigger>();
 
-                triggers.Add(trigger);
-            }
-            
-            _scheduler.ScheduleJob(jobDetail, triggers, true);
+            //foreach (var jobTrigger in job.Triggers)
+            //{
+            //    var trigger = TriggerBuilder.Create()
+            //        .WithIdentity(Guid.NewGuid().ToString())
+            //        .WithCronSchedule(jobTrigger.Cron)
+            //        .Build();
 
-            return job.Id;
+            //    triggers.Add(trigger);
+            //}
+
+            //_scheduler.ScheduleJob(jobDetail, triggers, true);
+
+            //return job.Id;
         }
 
-        private void OnEvent(object sender, JobManagerEventArgs eventArgs)
-        {
-            var workerId = eventArgs.EventDto.Worker.Id;
-            var worker = GetWorkerAtId(workerId);
-            if (worker == null)
-            {
-                throw new ArgumentException("Worker not found");
-            }
+        //private void OnEvent(object sender, JobManagerEventArgs eventArgs)
+        //{
+        //    var workerId = eventArgs.EventDto.Worker.Id;
+        //    var worker = GetWorkerAtId(workerId);
+        //    if (worker == null)
+        //    {
+        //        throw new ArgumentException("Worker not found");
+        //    }
 
-            GetCallbackAtWorker(worker).OnEvent(eventArgs.EventDto);
-        }
+        //    GetCallbackAtWorker(worker).OnEvent(eventArgs.EventDto);
+        //}
 
-        private TransferData OnEventSync(object sender, JobManagerEventArgs eventArgs)
-        {
-            var workerId = eventArgs.EventDto.Worker.Id;
-            var worker = GetWorkerAtId(workerId);
-            if (worker == null)
-            {
-                throw new ArgumentException("Worker not found");
-            }
+        //private TransferData OnEventSync(object sender, JobManagerEventArgs eventArgs)
+        //{
+        //    var workerId = eventArgs.EventDto.Worker.Id;
+        //    var worker = GetWorkerAtId(workerId);
+        //    if (worker == null)
+        //    {
+        //        throw new ArgumentException("Worker not found");
+        //    }
 
-            var eventResult = GetCallbackAtWorker(worker).OnEventSync(eventArgs.EventDto);
-            return eventResult;
-        }
+        //    var eventResult = GetCallbackAtWorker(worker).OnEventSync(eventArgs.EventDto);
+        //    return eventResult;
+        //}
 
-        private IJobManagerServiceCallback GetCallbackAtWorker(Worker worker)
-        {
-            var context = worker.OperationContext.GetCallbackChannel<IJobManagerServiceCallback>();
-            return context;
-        }
+        //private IJobManagerServiceCallback GetCallbackAtWorker(Worker worker)
+        //{
+        //    var context = worker.OperationContext.GetCallbackChannel<IJobManagerServiceCallback>();
+        //    return context;
+        //}
 
-        private Worker GetWorkerAtId(Guid workerId)
-        {
-            var worker = _workers.SingleOrDefault(w => w.Id == workerId);
-            return worker;
-        }
+        //private Worker GetWorkerAtId(Guid workerId)
+        //{
+        //    var worker = _workers.SingleOrDefault(w => w.Id == workerId);
+        //    return worker;
+        //}
     }
 }

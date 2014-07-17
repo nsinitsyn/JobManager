@@ -10,6 +10,7 @@ using JobManager.Data.Database.Repositories.Abstract.Interfaces;
 using JobManager.Data.Database.UnitOfWork;
 using JobManager.Data.Domain;
 using JobManager.Data.Ioc;
+using JobManager.Data.Utilities;
 
 namespace JobManager.Data.Mappers
 {
@@ -29,7 +30,18 @@ namespace JobManager.Data.Mappers
 
         public override JobDb DomainToDb(Job job)
         {
-            throw new NotImplementedException();
+            var serializeData = Serializator.SerializeToMemory(job.Data);
+            var sr = new StreamReader(serializeData);
+            var dataString = sr.ReadToEnd();
+            var jobDb = new JobDb
+                            {
+                                Id = job.Id,
+                                ClassName = job.ClassName,
+                                Data = dataString,
+                                Triggers = job.Triggers.Select(TriggerMapper.Mapper.DomainToDb).ToList(),
+                                Workers = job.Workers.Select(WorkerMapper.Mapper.DomainToDb).ToList()
+                            };
+            return jobDb;
         }
 
         public override JobDto DomainToDto(Job job)

@@ -25,7 +25,12 @@ namespace JobManager.Data.Mappers
 
         public override WorkerDb DomainToDb(Worker worker)
         {
-            throw new NotImplementedException();
+            var workerDb = new WorkerDb
+                               {
+                                   Id = worker.Id,
+                                   Completed = worker.Completed
+                               };
+            return workerDb;
         }
 
         public override WorkerDto DomainToDto(Worker worker)
