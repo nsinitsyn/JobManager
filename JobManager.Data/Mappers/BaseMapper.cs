@@ -6,14 +6,13 @@ using System.Threading.Tasks;
 
 namespace JobManager.Data.Mappers
 {
-    public abstract class BaseMapper<TDto, TDomain, TDb>
+    public abstract class BaseMapper<TDto, TDomain, TDb> : DtoDomainMapper<TDto, TDomain>
     {
         public abstract TDomain DbToDomain(TDb db);
+        public abstract TDto DbToDTo(TDb db);
 
         public abstract TDb DomainToDb(TDomain domain);
-        public abstract TDto DomainToDto(TDomain domain);
 
         public abstract TDb DtoToDb(TDto dto);
-        public abstract TDomain DtoToDomain(TDto dto);
     }
 }

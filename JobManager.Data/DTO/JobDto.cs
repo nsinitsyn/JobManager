@@ -10,6 +10,11 @@ namespace JobManager.Data.DTO
     [DataContract]
     public class JobDto
     {
+        public JobDto()
+        {
+            Triggers = new List<TriggerDto>();
+        }
+
         [DataMember]
         public Guid Id { get; set; }
 
@@ -21,5 +26,8 @@ namespace JobManager.Data.DTO
 
         [DataMember]
         public List<TriggerDto> Triggers { get; set; }
+
+        [DataMember]
+        public bool Scheduled { get; set; }
     }
 }

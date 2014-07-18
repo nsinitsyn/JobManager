@@ -7,6 +7,7 @@
       <xs:element minOccurs="0" name="ClassName" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="Data" nillable="true" type="tns:TransferData" />
       <xs:element minOccurs="0" name="Id" type="ser:guid" />
+      <xs:element minOccurs="0" name="Triggers" nillable="true" type="tns:ArrayOfTriggerDto" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="JobDto" nillable="true" type="tns:JobDto" />
@@ -16,10 +17,22 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="TransferData" nillable="true" type="tns:TransferData" />
+  <xs:complexType name="ArrayOfTriggerDto">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="TriggerDto" nillable="true" type="tns:TriggerDto" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfTriggerDto" nillable="true" type="tns:ArrayOfTriggerDto" />
+  <xs:complexType name="TriggerDto">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Cron" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="TriggerDto" nillable="true" type="tns:TriggerDto" />
   <xs:complexType name="WorkerDto">
     <xs:sequence>
       <xs:element minOccurs="0" name="Id" type="ser:guid" />
-      <xs:element minOccurs="0" name="JobDto" nillable="true" type="tns:JobDto" />
+      <xs:element minOccurs="0" name="JobId" type="ser:guid" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="WorkerDto" nillable="true" type="tns:WorkerDto" />
@@ -27,7 +40,7 @@
     <xs:sequence>
       <xs:element minOccurs="0" name="IsReturnResult" type="xs:boolean" />
       <xs:element minOccurs="0" name="TransferData" nillable="true" type="tns:TransferData" />
-      <xs:element minOccurs="0" name="Worker" nillable="true" type="tns:WorkerDto" />
+      <xs:element minOccurs="0" name="WorkerId" type="ser:guid" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="JobEventDto" nillable="true" type="tns:JobEventDto" />

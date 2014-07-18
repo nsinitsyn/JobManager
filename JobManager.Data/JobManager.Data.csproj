@@ -36,10 +36,12 @@
     <Reference Include="Castle.Windsor">
       <HintPath>..\packages\Castle.Windsor.3.3.0\lib\net45\Castle.Windsor.dll</HintPath>
     </Reference>
-    <Reference Include="EntityFramework">
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
-    <Reference Include="EntityFramework.SqlServer">
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -60,7 +62,6 @@
     <Compile Include="Database\Entities\BaseEntity.cs" />
     <Compile Include="Database\Entities\JobDb.cs" />
     <Compile Include="Database\Entities\TriggerDb.cs" />
-    <Compile Include="Database\Entities\WorkerDb.cs" />
     <Compile Include="Database\Repositories\Abstract\BaseRepository.cs" />
     <Compile Include="Database\Repositories\Abstract\Interfaces\IBaseRepository.cs" />
     <Compile Include="Database\Repositories\Abstract\Interfaces\IJobRepository.cs" />
@@ -68,23 +69,39 @@
     <Compile Include="Database\UnitOfWork\IUnitOfWork.cs" />
     <Compile Include="Database\UnitOfWork\UnitOfWork.cs" />
     <Compile Include="Domain\Job.cs" />
+    <Compile Include="Domain\JobEvent.cs" />
     <Compile Include="Domain\Trigger.cs" />
     <Compile Include="Domain\Worker.cs" />
     <Compile Include="DTO\JobDto.cs" />
     <Compile Include="DTO\JobEventDto.cs" />
     <Compile Include="DTO\TransferData.cs" />
+    <Compile Include="DTO\TriggerDto.cs" />
     <Compile Include="DTO\WorkerDto.cs" />
     <Compile Include="Ioc\DataInstaller.cs" />
+    <Compile Include="Ioc\IocContainer.cs" />
     <Compile Include="Ioc\RepositoriesInstaller.cs" />
     <Compile Include="JobManagerEventArgs.cs" />
     <Compile Include="JobManagerEventHandler.cs" />
-    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Mappers\BaseMapper.cs" />
+    <Compile Include="Mappers\DtoDomainMapper.cs" />
+    <Compile Include="Mappers\JobEventMapper.cs" />
+    <Compile Include="Mappers\JobMapper.cs" />
+    <Compile Include="Mappers\TriggerMapper.cs" />
+    <Compile Include="Mappers\WorkerMapper.cs" />
+    <Compile Include="Migrations\Configuration.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\Serializator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Database\Sql\CreateQuartzTables.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

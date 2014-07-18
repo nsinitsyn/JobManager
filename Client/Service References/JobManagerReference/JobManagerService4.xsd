@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:import schemaLocation="http://localhost:8000/JobManagerService?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/JobManager.Data.DTO" />
+  <xs:import schemaLocation="http://localhost:8000/JobManagerService?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
   <xs:element name="RunJob">
     <xs:complexType>
       <xs:sequence>
@@ -39,27 +40,36 @@
   </xs:element>
   <xs:element name="RegisterJobResponse">
     <xs:complexType>
-      <xs:sequence />
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="OnEvent">
-    <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q7="http://schemas.datacontract.org/2004/07/JobManager.Data.DTO" minOccurs="0" name="eventDto" nillable="true" type="q7:JobEventDto" />
+        <xs:element xmlns:q7="http://schemas.microsoft.com/2003/10/Serialization/" minOccurs="0" name="RegisterJobResult" type="q7:guid" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="OnEventSync">
+  <xs:element name="OnEvent">
     <xs:complexType>
       <xs:sequence>
         <xs:element xmlns:q8="http://schemas.datacontract.org/2004/07/JobManager.Data.DTO" minOccurs="0" name="eventDto" nillable="true" type="q8:JobEventDto" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+  <xs:element name="OnEventSync">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q9="http://schemas.datacontract.org/2004/07/JobManager.Data.DTO" minOccurs="0" name="eventDto" nillable="true" type="q9:JobEventDto" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
   <xs:element name="OnEventSyncResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q9="http://schemas.datacontract.org/2004/07/JobManager.Data.DTO" minOccurs="0" name="OnEventSyncResult" nillable="true" type="q9:TransferData" />
+        <xs:element xmlns:q10="http://schemas.datacontract.org/2004/07/JobManager.Data.DTO" minOccurs="0" name="OnEventSyncResult" nillable="true" type="q10:TransferData" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="WorkerWasStarted">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q11="http://schemas.datacontract.org/2004/07/JobManager.Data.DTO" minOccurs="0" name="worker" nillable="true" type="q11:WorkerDto" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

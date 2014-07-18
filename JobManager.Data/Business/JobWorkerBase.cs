@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using JobManager.Data.DTO;
+using JobManager.Data.Domain;
 
 namespace JobManager.Data.Business
 {
@@ -12,20 +13,20 @@ namespace JobManager.Data.Business
         public event JobManagerEventHandler OnEvent;
         public event JobManagerEventSyncHandler OnEventSync;
 
-        protected abstract TransferData Run(object data);
-        protected abstract TransferData Signal(object data);
+        protected abstract object Run(object data);
+        protected abstract object Signal(object data);
 
-        private WorkerDto _workerDto;
+        private Worker _worker;
 
-        public TransferData RunWrap(object data, WorkerDto workerDto)
+        public object RunWrap(object data, Worker worker)
         {
-            _workerDto = workerDto;
+            _worker = worker;
 
             var result = Run(data);
             return result;
         }
 
-        public TransferData SignalWrap(object data)
+        public object SignalWrap(object data)
         {
             var result = Signal(data);
             return result;
@@ -35,23 +36,23 @@ namespace JobManager.Data.Business
         {
             OnEvent(this, new JobManagerEventArgs
                               {
-                                  EventDto = new JobEventDto
-                                                 {
-                                                     TransferData = new TransferData(eventData),
-                                                     Worker = _workerDto
-                                                 }
+                                  Event = new JobEvent
+                                              {
+                                                  Data = eventData,
+                                                  WorkerId = _worker.Id
+                                              }
                               });
         }
 
-        public TransferData SendEventSync(object eventData)
+        public object SendEventSync(object eventData)
         {
             var result = OnEventSync(this, new JobManagerEventArgs
                                                {
-                                                   EventDto = new JobEventDto
-                                                                  {
-                                                                      TransferData = new TransferData(eventData),
-                                                                      Worker = _workerDto
-                                                                  }
+                                                   Event = new JobEvent
+                                                               {
+                                                                   Data = eventData,
+                                                                   WorkerId = _worker.Id
+                                                               }
                                                });
 
             return result;

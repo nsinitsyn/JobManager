@@ -49,5 +49,32 @@ namespace Client
             Thread.Sleep(2000);
             client.Signal(workerDto, new TransferData("stop"));
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            const string jobName = "JobsLibraryTest.JobWorker";
+            var jobData = new JobWorkerParameters
+            {
+                FileName = "testJMService.txt"
+            };
+
+            var context = new InstanceContext(new JobManagerServiceCallback());
+            var client = new JobManagerServiceClient(context);
+
+            var jobDto = new JobDto
+            {
+                ClassName = jobName,
+                Data = new TransferData(jobData),
+                Triggers = new List<TriggerDto>
+                               {
+                                   new TriggerDto
+                                       {
+                                           Cron = "0 0/1 * * * ?"
+                                       }
+                               }
+            };
+
+            var jobId = client.RegisterJob(jobDto);
+        }
     }
 }

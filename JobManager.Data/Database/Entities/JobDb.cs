@@ -16,9 +16,6 @@ namespace JobManager.Data.Database.Entities
         public string Data { get; set; }
 
         [InverseProperty("Job")]
-        public virtual IList<WorkerDb> Workers { get; set; }
-
-        [InverseProperty("Job")]
         public virtual IList<TriggerDb> Triggers { get; set; }
     }
 }

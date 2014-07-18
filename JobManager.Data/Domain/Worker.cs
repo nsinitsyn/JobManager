@@ -13,7 +13,6 @@ namespace JobManager.Data.Domain
         public Guid Id { get; set; }
         public Job Job { get; set; }
         public JobWorkerBase Instance { get; set; }
-        public OperationContext OperationContext { get; set; }
         public bool Completed { get; set; }
     }
 }

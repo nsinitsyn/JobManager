@@ -9,7 +9,7 @@ using JobManager.Data.Domain;
 
 namespace JobManager.Data.Mappers
 {
-    public class WorkerMapper : BaseMapper<WorkerDto, Worker, WorkerDb>
+    public class WorkerMapper : DtoDomainMapper<WorkerDto, Worker>
     {
         static WorkerMapper()
         {
@@ -18,23 +18,13 @@ namespace JobManager.Data.Mappers
 
         public static WorkerMapper Mapper { get; set; }
 
-        public override Worker DbToDomain(WorkerDb workerDb)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override WorkerDb DomainToDb(Worker worker)
-        {
-            var workerDb = new WorkerDb
-                               {
-                                   Id = worker.Id,
-                                   Completed = worker.Completed
-                               };
-            return workerDb;
-        }
-
         public override WorkerDto DomainToDto(Worker worker)
         {
+            if (worker == null)
+            {
+                return null;
+            }
+
             var workerDto = new WorkerDto
                                 {
                                     Id = worker.Id,
@@ -43,14 +33,14 @@ namespace JobManager.Data.Mappers
             return workerDto;
         }
 
-        public override WorkerDb DtoToDb(WorkerDto workerDto)
-        {
-            throw new NotImplementedException();
-        }
-
         public override Worker DtoToDomain(WorkerDto workerDto)
         {
-            throw new NotImplementedException();
+            if (workerDto == null)
+            {
+                return null;
+            }
+
+            return null;
         }
     }
 }

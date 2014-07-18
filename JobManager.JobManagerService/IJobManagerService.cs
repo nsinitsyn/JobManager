@@ -16,19 +16,25 @@ namespace JobManager.JobManagerService
         WorkerDto RunJob(JobDto job);
 
         [OperationContract]
-        TransferData Signal(WorkerDto workerDto, TransferData data);
+        TransferData Signal(Guid workerId, TransferData data);
 
         [OperationContract]
-        Guid RegisterJob(JobDto job);
+        JobDto GetJob(Guid jobId);
 
-        //Job GetJob(Guid jobId);
-        //List<Worker> GetRunningJobs();
-        ////StopJobToken StopJob(); // Запрос на остановку задачи. Каждая задача сама определяет этот метод
+        [OperationContract]
+        Guid ScheduleJob(JobDto job); // регит джобу в нашей базе и в quartz
+
+        [OperationContract]
+        void RescheduleJob(JobDto job);
+
+        [OperationContract]
+        void UnscheduleJob(Guid jobId); // удаляет джобу из базы quartz (делает ее невыполняющейся), в нашей оставляет
+
+        [OperationContract]
+        void DeleteJob(Guid jobId); // удаляет джобу из нашей базы и из quartz
+
+        //List<Worker> GetWorkers();
         //List<Job> GetJobs(); // Все задачи. Каждая задача имеет статус (Running, ...) и т.д.
-        //void RegisterJob(Job job); // Клиент может установить периодическую задачу
-        //void SetJobToNonExecutable(Job job); // Пометить ее как неисполняемую с сохранением всех настроек
-        //void DeleteJob(); // Удаляет джобу из базы
-        //JobOutputDataBase SendSignal(Worker worker, Signal signal); // Вызвать метод Job'ы прямо во время выполнения (это общий случай метода остановки джобы)
         // void ChangeJob(); // Изменить настройки (например триггеры джобе; в т.ч. той, которая регилась через конфиг - в этом случае нужно и в конфиге поменять триггеры)
 
         //// События

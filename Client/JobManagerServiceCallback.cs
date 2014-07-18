@@ -16,7 +16,7 @@ namespace Client
     {
         public void OnEvent(JobEventDto eventDto)
         {
-            if (eventDto.Worker.Id == WorkersKeeper.Worker1) // eventDto.Worker.Id == "workerConcreteId"
+            if (eventDto.WorkerId == WorkersKeeper.Worker1) // eventDto.Worker.Id == "workerConcreteId"
             {
                 if (eventDto.IsReturnResult)
                 {
@@ -46,13 +46,18 @@ namespace Client
         {
             // returnResult приходит только асинхронно
 
-            if (eventDto.Worker.Id == WorkersKeeper.Worker1)
+            if (eventDto.WorkerId == WorkersKeeper.Worker1)
             {
                 var data = (string)eventDto.TransferData.GetData();
                 //Thread.Sleep(7000);
                 return new TransferData("EventSync result");
             }
             return null;
+        }
+
+        public void WorkerWasStarted(WorkerDto worker)
+        {
+            throw new NotImplementedException();
         }
     }
 }

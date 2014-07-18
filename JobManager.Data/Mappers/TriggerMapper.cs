@@ -20,11 +20,35 @@ namespace JobManager.Data.Mappers
 
         public override Trigger DbToDomain(TriggerDb triggerDb)
         {
-            throw new NotImplementedException();
+            if (triggerDb == null)
+            {
+                return null;
+            }
+
+            var trigger = new Trigger
+                              {
+                                  Cron = triggerDb.Cron
+                              };
+            return trigger;
+        }
+
+        public override TriggerDto DbToDTo(TriggerDb triggerDb)
+        {
+            if (triggerDb == null)
+            {
+                return null;
+            }
+
+            return null;
         }
 
         public override TriggerDb DomainToDb(Trigger trigger)
         {
+            if (trigger == null)
+            {
+                return null;
+            }
+
             var triggerDb = new TriggerDb
                                 {
                                     Cron = trigger.Cron
@@ -34,11 +58,25 @@ namespace JobManager.Data.Mappers
 
         public override TriggerDto DomainToDto(Trigger trigger)
         {
-            throw new NotImplementedException();
+            if (trigger == null)
+            {
+                return null;
+            }
+
+            var triggerDto = new TriggerDto
+                                 {
+                                     Cron = trigger.Cron
+                                 };
+            return triggerDto;
         }
 
         public override TriggerDb DtoToDb(TriggerDto triggerDto)
         {
+            if (triggerDto == null)
+            {
+                return null;
+            }
+
             var triggerDb = new TriggerDb
                                 {
                                     Cron = triggerDto.Cron
@@ -48,7 +86,16 @@ namespace JobManager.Data.Mappers
 
         public override Trigger DtoToDomain(TriggerDto triggerDto)
         {
-            throw new NotImplementedException();
+            if (triggerDto == null)
+            {
+                return null;
+            }
+
+            var trigger = new Trigger
+                              {
+                                  Cron = triggerDto.Cron
+                              };
+            return trigger;
         }
     }
 }

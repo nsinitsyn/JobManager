@@ -25,53 +25,97 @@ namespace JobManager.Data.Mappers
 
         public override Job DbToDomain(JobDb jobDb)
         {
-            throw new NotImplementedException();
+            if (jobDb == null)
+            {
+                return null;
+            }
+
+            var job = new Job
+                          {
+                              Id = jobDb.Id,
+                              ClassName = jobDb.ClassName,
+                              Triggers = jobDb.Triggers.Select(TriggerMapper.Mapper.DbToDomain).ToList(),
+                              Data = Serializator.DeserializeFromString(jobDb.Data)
+                          };
+            return job;
+        }
+
+        public override JobDto DbToDTo(JobDb jobDb)
+        {
+            if (jobDb == null)
+            {
+                return null;
+            }
+
+            return null;
         }
 
         public override JobDb DomainToDb(Job job)
         {
-            var serializeData = Serializator.SerializeToMemory(job.Data);
-            var sr = new StreamReader(serializeData);
-            var dataString = sr.ReadToEnd();
+            if (job == null)
+            {
+                return null;
+            }
+
             var jobDb = new JobDb
                             {
                                 Id = job.Id,
                                 ClassName = job.ClassName,
-                                Data = dataString,
-                                Triggers = job.Triggers.Select(TriggerMapper.Mapper.DomainToDb).ToList(),
-                                Workers = job.Workers.Select(WorkerMapper.Mapper.DomainToDb).ToList()
+                                Data = Serializator.SerializeToString(job.Data),
+                                Triggers = job.Triggers.Select(TriggerMapper.Mapper.DomainToDb).ToList()
                             };
             return jobDb;
         }
 
         public override JobDto DomainToDto(Job job)
         {
-            throw new NotImplementedException();
+            if (job == null)
+            {
+                return null;
+            }
+
+            var jobDto = new JobDto
+                             {
+                                 Id = job.Id,
+                                 ClassName = job.ClassName,
+                                 Data = new TransferData(job.Data),
+                                 Triggers = job.Triggers.Select(TriggerMapper.Mapper.DomainToDto).ToList()
+                             };
+
+            return jobDto;
         }
 
         public override JobDb DtoToDb(JobDto jobDto)
         {
-            var sr = new StreamReader(jobDto.Data.SerializedData);
-            var dataString = sr.ReadToEnd();
+            if (jobDto == null)
+            {
+                return null;
+            }
+
             var jobDb = new JobDb
                             {
                                 Id = jobDto.Id,
                                 ClassName = jobDto.ClassName,
-                                Data = dataString,
+                                Data = Serializator.SerializeToString(jobDto.Data.GetData()),
                                 Triggers = jobDto.Triggers.Select(TriggerMapper.Mapper.DtoToDb).ToList()
                             };
 
             return jobDb;
         }
 
-        public override Job DtoToDomain(JobDto dto)
+        public override Job DtoToDomain(JobDto jobDto)
         {
+            if (jobDto == null)
+            {
+                return null;
+            }
+
             var job = new Job
                           {
-                              Id = dto.Id,
-                              ClassName = dto.ClassName,
-                              Data = dto.Data.GetData(),
-                              Triggers = dto.Triggers.Select(TriggerMapper.Mapper.DtoToDomain).ToList()
+                              Id = jobDto.Id,
+                              ClassName = jobDto.ClassName,
+                              Data = jobDto.Data.GetData(),
+                              Triggers = jobDto.Triggers.Select(TriggerMapper.Mapper.DtoToDomain).ToList()
                           };
 
             return job;

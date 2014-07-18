@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
+using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,32 +22,34 @@ namespace JobManager.Data.Database
 
         public static void SetAutoMigrateInitializer()
         {
-            System.Data.Entity.Database.SetInitializer(new MigrateDatabaseToLatestVersion<DataContext, Configuration>());
+            //System.Data.Entity.Database.SetInitializer(new MigrateDatabaseToLatestVersion<DataContext, Configuration>());
         }
 
         public bool RecreateDatabase()
         {
-            var migrator = new DbMigrator(new Configuration());
-            var migrations = migrator.GetLocalMigrations();
+            //var migrator = new DbMigrator(new Configuration());
+            //var migrations = migrator.GetLocalMigrations();
             if (_dataContext.Database.Exists())
             {
-                //_dataContext.Database.ExecuteSqlCommand(TransactionalBehavior.DoNotEnsureTransaction,
-                //    string.Format("ALTER DATABASE {0} SET SINGLE_USER WITH ROLLBACK IMMEDIATE",
-                //    _dataContext.Database.Connection.Database));
+                _dataContext.Database.ExecuteSqlCommand(TransactionalBehavior.DoNotEnsureTransaction, 
+                                                        string.Format(
+                                                            "ALTER DATABASE {0} SET SINGLE_USER WITH ROLLBACK IMMEDIATE",
+                                                            _dataContext.Database.Connection.Database));
                 if (!_dataContext.Database.Delete())
                 {
                     return false;
                 }
             }
 
-            if (migrations.Count() != 0)
-            {
-                migrator.Update();
-            }
-            else
+            //if (migrations.Count() != 0)
+            //{
+            //    migrator.Update();
+            //}
+            //else
             {
                 _dataContext.Database.Create();
             }
+            _dataContext.Database.ExecuteSqlCommand(File.ReadAllText("Database/Sql/CreateQuartzTables.sql"));
             return true;
         }
     }

@@ -30,178 +30,80 @@ namespace JobManager.JobManagerService
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Multiple)]
     public class JobManagerService : IJobManagerService
     {
-        private readonly JobRunner _runner;
+        private readonly Dictionary<Guid, OperationContext> _workerContexts = new Dictionary<Guid, OperationContext>();
 
         public JobManagerService()
         {
-            _runner = new JobRunner();
+            JobRunner.Runner.OnEvent += OnEventHandler;
+            JobRunner.Runner.OnEventSync += OnEventSyncHandler;
         }
 
-        public WorkerDto RunJob(JobDto job)
+        public WorkerDto RunJob(JobDto jobDto)
         {
-            if (job.Id == Guid.Empty)
+            if (jobDto.Id == Guid.Empty)
             {
-                job.Id = Guid.NewGuid();
+                jobDto.Id = Guid.NewGuid();
             }
-
-            var className = job.ClassName;
-            var assembly = Assembly.Load(JobManagerSettings.JobsLibraryAssemblyName);
-            var classType = assembly.GetType(className);
-
-            var instanceHandle = Activator.CreateInstance(classType);
-
-            var instance = instanceHandle as JobWorkerBase;
-            if (instance == null)
-            {
-                throw new InvalidOperationException(string.Format("Класс {0} не наследует класс JobWorkerBase", className));
-            }
-            instance.OnEvent += OnEvent;
-            instance.OnEventSync += OnEventSync;
-
-            var worker = new Worker
-                             {
-                                 Id = Guid.NewGuid(),
-                                 Job = JobMapper.Mapper.DtoToDomain(job),
-                                 Instance = instance,
-                                 OperationContext = OperationContext.Current
-                             };
-            _workers.Add(worker);
-
-            var workerDto = WorkerMapper.Mapper.DomainToDto(worker);
-
-            var task = new Task<TransferData>(() => instance.RunWrap(job.Data.GetData(), workerDto));
-            task.ContinueWith(t =>
-                                  {
-                                      var ex = t.Exception;
-                                      if (ex != null)
-                                      {
-                                          GetWorkerAtId(worker.Id).Completed = true;
-                                      }
-                                      else
-                                      {
-                                          var result = t.Result;
-                                          OnEvent(null, new JobManagerEventArgs
-                                          {
-                                              EventDto = new JobEventDto
-                                              {
-                                                  IsReturnResult = true,
-                                                  TransferData = result,
-                                                  Worker = workerDto
-                                              }
-                                          });
-                                          GetWorkerAtId(worker.Id).Completed = true;
-                                      }
-                                  });
-            
-            task.Start();
-
-            return workerDto;
-        }
-
-        public TransferData Signal(WorkerDto workerDto, TransferData data)
-        {
-            // ?? ПРОБЛЕМА: Что если Run завершился раньше функции Signal ?
-            // ?? Что если слать сигнал после получения returnResult через событие
-
-            var worker = GetWorkerAtId(workerDto.Id);
-            if (worker == null)
-            {
-                throw new ArgumentException("Worker not found");
-            }
-            if (worker.Completed)
-            {
-                throw new InvalidOperationException("Worker has been completed");
-            }
-
-            var instance = worker.Instance;
-
-            try
-            {
-                return instance.SignalWrap(data.GetData());
-            }
-            catch
-            {
-                // ??? Надо бы уведомить клиента о необработанном исключении и закрыть воркер
-                // GetWorkerAtId(worker.Id).Completed = true;
-                return null;
-            }
-        }
-
-        public Guid RegisterJob(JobDto jobDto)
-        {
             var job = JobMapper.Mapper.DtoToDomain(jobDto);
-            var jobId = _runner.RegisterJob(job);
-
-            //if (job.Id == Guid.Empty)
-            //{
-            //    job.Id = Guid.NewGuid();
-            //}
-
-            //var jobRepository = IocContainer.Container.Resolve<IJobRepository>();
-            //var unitOfWork = IocContainer.Container.Resolve<IUnitOfWork>();
-            //var jobDb = JobMapper.Mapper.DtoToDb(job);
-            //jobRepository.Add(jobDb);
-            //unitOfWork.Commit();
-
-            //IDictionary jobDataDictionary = new Dictionary<string, object> { { "jobId", job.Id.ToString() }};
-
-            //var jobDetail = JobBuilder.Create<JobsDistributor>()
-            //    .WithIdentity(Guid.NewGuid().ToString())
-            //    .SetJobData(new JobDataMap(jobDataDictionary))
-            //    .Build();
-
-            //var triggers = new QuartzLib.Collection.HashSet<ITrigger>();
-
-            //foreach (var jobTrigger in job.Triggers)
-            //{
-            //    var trigger = TriggerBuilder.Create()
-            //        .WithIdentity(Guid.NewGuid().ToString())
-            //        .WithCronSchedule(jobTrigger.Cron)
-            //        .Build();
-
-            //    triggers.Add(trigger);
-            //}
-
-            //_scheduler.ScheduleJob(jobDetail, triggers, true);
-
-            //return job.Id;
+            var worker = JobRunner.Runner.RunJob(job);
+            _workerContexts[worker.Id] = OperationContext.Current;
+            return WorkerMapper.Mapper.DomainToDto(worker);
         }
 
-        //private void OnEvent(object sender, JobManagerEventArgs eventArgs)
-        //{
-        //    var workerId = eventArgs.EventDto.Worker.Id;
-        //    var worker = GetWorkerAtId(workerId);
-        //    if (worker == null)
-        //    {
-        //        throw new ArgumentException("Worker not found");
-        //    }
+        public TransferData Signal(Guid workerId, TransferData data)
+        {
+            var resultData = JobRunner.Runner.Signal(workerId, data.GetData());
+            return new TransferData(resultData);
+        }
 
-        //    GetCallbackAtWorker(worker).OnEvent(eventArgs.EventDto);
-        //}
+        public JobDto GetJob(Guid jobId)
+        {
+            var job = JobRunner.Runner.GetJob(jobId);
+            var jobDto = JobMapper.Mapper.DomainToDto(job);
+            return jobDto;
+        }
 
-        //private TransferData OnEventSync(object sender, JobManagerEventArgs eventArgs)
-        //{
-        //    var workerId = eventArgs.EventDto.Worker.Id;
-        //    var worker = GetWorkerAtId(workerId);
-        //    if (worker == null)
-        //    {
-        //        throw new ArgumentException("Worker not found");
-        //    }
+        public Guid ScheduleJob(JobDto jobDto)
+        {
+            if (jobDto.Id == Guid.Empty)
+            {
+                jobDto.Id = Guid.NewGuid();
+            }
+            var job = JobMapper.Mapper.DtoToDomain(jobDto);
+            var jobId = JobRunner.Runner.ScheduleJob(job);
+            return jobId;
+        }
 
-        //    var eventResult = GetCallbackAtWorker(worker).OnEventSync(eventArgs.EventDto);
-        //    return eventResult;
-        //}
+        public void RescheduleJob(Guid jobId)
+        {
+            JobRunner.Runner.RescheduleJob(jobId);
+        }
 
-        //private IJobManagerServiceCallback GetCallbackAtWorker(Worker worker)
-        //{
-        //    var context = worker.OperationContext.GetCallbackChannel<IJobManagerServiceCallback>();
-        //    return context;
-        //}
+        public void UnscheduleJob(Guid jobId)
+        {
+            JobRunner.Runner.UnscheduleJob(jobId);
+        }
 
-        //private Worker GetWorkerAtId(Guid workerId)
-        //{
-        //    var worker = _workers.SingleOrDefault(w => w.Id == workerId);
-        //    return worker;
-        //}
+        public void DeleteJob(Guid jobId)
+        {
+            JobRunner.Runner.DeleteJob(jobId);
+        }
+
+        private void OnEventHandler(object sender, JobManagerEventArgs eventArgs)
+        {
+            var eventDto = JobEventMapper.Mapper.DomainToDto(eventArgs.Event);
+
+            var context = _workerContexts[eventDto.WorkerId];
+            context.GetCallbackChannel<IJobManagerServiceCallback>().OnEvent(eventDto);
+        }
+
+        private object OnEventSyncHandler(object sender, JobManagerEventArgs eventArgs)
+        {
+            var eventDto = JobEventMapper.Mapper.DomainToDto(eventArgs.Event);
+
+            var context = _workerContexts[eventDto.WorkerId];
+            var result = context.GetCallbackChannel<IJobManagerServiceCallback>().OnEventSync(eventDto);
+            return result;
+        }
     }
 }

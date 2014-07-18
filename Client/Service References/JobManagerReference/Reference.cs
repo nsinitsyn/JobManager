@@ -28,10 +28,10 @@ namespace Client.JobManagerReference {
         System.Threading.Tasks.Task<JobManager.Data.DTO.TransferData> SignalAsync(JobManager.Data.DTO.WorkerDto workerDto, JobManager.Data.DTO.TransferData data);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IJobManagerService/RegisterJob", ReplyAction="http://tempuri.org/IJobManagerService/RegisterJobResponse")]
-        void RegisterJob(JobManager.Data.DTO.JobDto job);
+        System.Guid RegisterJob(JobManager.Data.DTO.JobDto job);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IJobManagerService/RegisterJob", ReplyAction="http://tempuri.org/IJobManagerService/RegisterJobResponse")]
-        System.Threading.Tasks.Task RegisterJobAsync(JobManager.Data.DTO.JobDto job);
+        System.Threading.Tasks.Task<System.Guid> RegisterJobAsync(JobManager.Data.DTO.JobDto job);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -42,6 +42,9 @@ namespace Client.JobManagerReference {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IJobManagerService/OnEventSync", ReplyAction="http://tempuri.org/IJobManagerService/OnEventSyncResponse")]
         JobManager.Data.DTO.TransferData OnEventSync(JobManager.Data.DTO.JobEventDto eventDto);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IJobManagerService/WorkerWasStarted")]
+        void WorkerWasStarted(JobManager.Data.DTO.WorkerDto worker);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -88,11 +91,11 @@ namespace Client.JobManagerReference {
             return base.Channel.SignalAsync(workerDto, data);
         }
         
-        public void RegisterJob(JobManager.Data.DTO.JobDto job) {
-            base.Channel.RegisterJob(job);
+        public System.Guid RegisterJob(JobManager.Data.DTO.JobDto job) {
+            return base.Channel.RegisterJob(job);
         }
         
-        public System.Threading.Tasks.Task RegisterJobAsync(JobManager.Data.DTO.JobDto job) {
+        public System.Threading.Tasks.Task<System.Guid> RegisterJobAsync(JobManager.Data.DTO.JobDto job) {
             return base.Channel.RegisterJobAsync(job);
         }
     }

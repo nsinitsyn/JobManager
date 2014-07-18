@@ -21,7 +21,7 @@ namespace JobsLibraryTest
     {
         private bool Stop = false;
 
-        protected override TransferData Run(object data)
+        protected override object Run(object data)
         {
             //Logger.Log.Info("Worker 1 start running");
 
@@ -42,8 +42,8 @@ namespace JobsLibraryTest
             {
                 if (Stop)
                 {
-                    //var result = SendEventSync("Worker1 has been stopped").GetData();
-                    //SendEvent("Worker1 has been stopped");
+                    var result = SendEventSync("Worker1 has been stopped");
+                    SendEvent("Worker1 has been stopped");
                     break;
                 }
 
@@ -52,10 +52,10 @@ namespace JobsLibraryTest
                 //throw new InvalidOperationException("bad luck :(");
             }
 
-            return new TransferData(new JobWorkerOutput { Result = "Worker 1 - It's OK!" });
+            return new JobWorkerOutput { Result = "Worker 1 - It's OK!" };
         }
 
-        protected override TransferData Signal(object data)
+        protected override object Signal(object data)
         {
             var d = (string) data;
             Thread.Sleep(5000);

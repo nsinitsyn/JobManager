@@ -15,7 +15,7 @@ namespace JobsLibraryTest
 {
     class JobWorker2 : JobWorkerBase
     {
-        protected override TransferData Run(object data)
+        protected override object Run(object data)
         {
             Logger.Log.Info("Worker 2 start running");
 
@@ -30,7 +30,7 @@ namespace JobsLibraryTest
             return new TransferData(new JobWorkerOutput { Result = "Worker 2 - It's OK!" });
         }
 
-        protected override TransferData Signal(object data)
+        protected override object Signal(object data)
         {
             // ...
             return null;

@@ -16,7 +16,7 @@ namespace JobManager.Data.DTO
         }
 
         [DataMember]
-        public WorkerDto Worker { get; set; }
+        public Guid WorkerId { get; set; }
 
         [DataMember]
         public TransferData TransferData { get; set; }

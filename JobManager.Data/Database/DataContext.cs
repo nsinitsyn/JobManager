@@ -20,7 +20,6 @@ namespace JobManager.Data.Database
         public DataContext() : base("JobManagerDatabase") { }
 
         public DbSet<JobDb> Jobs { get; set; }
-        public DbSet<WorkerDb> Workers { get; set; }
         public DbSet<TriggerDb> Triggers { get; set; }
 
         public static DataContext DefaultContext
@@ -34,7 +33,6 @@ namespace JobManager.Data.Database
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<JobDb>().Map(m => m.Requires("IsDeleted").HasValue(false)).Ignore(m => m.IsDeleted);
-            modelBuilder.Entity<WorkerDb>().Map(m => m.Requires("IsDeleted").HasValue(false)).Ignore(m => m.IsDeleted);
             modelBuilder.Entity<TriggerDb>().Map(m => m.Requires("IsDeleted").HasValue(false)).Ignore(m => m.IsDeleted);
 
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using JobManager.Data;
 using JobManager.Data.Business;
 using JobManager.Data.DTO;
+using JobManager.Data.Database.Entities;
 using JobManager.Data.Database.Repositories.Abstract.Interfaces;
 using JobManager.Data.Database.UnitOfWork;
 using JobManager.Data.Domain;
@@ -21,20 +22,29 @@ using QuartzLib = Quartz;
 
 namespace JobManager.JobManagerService.Business
 {
+    // Singleton
     public class JobRunner
     {
-        private JobRunner _runner;
+        public event JobManagerEventHandler OnEvent;
+        public event JobManagerEventSyncHandler OnEventSync;
 
-        public JobRunner Runner
+        private static JobRunner _runner;
+
+        public static JobRunner Runner
         {
             get { return _runner ?? (_runner = new JobRunner()); }
         }
 
         private readonly List<Worker> _workers = new List<Worker>();
         private readonly IScheduler _scheduler;
+        private readonly IJobRepository _jobRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public JobRunner()
+        private JobRunner()
         {
+            _jobRepository = IocContainer.Container.Resolve<IJobRepository>();
+            _unitOfWork = IocContainer.Container.Resolve<IUnitOfWork>();
+
             ISchedulerFactory schedFact = new StdSchedulerFactory();
             _scheduler = schedFact.GetScheduler();
             _scheduler.Start();
@@ -45,11 +55,6 @@ namespace JobManager.JobManagerService.Business
 
         public Worker RunJob(Job job)
         {
-            if (job.Id == Guid.Empty)
-            {
-                job.Id = Guid.NewGuid();
-            }
-
             var className = job.ClassName;
             var assembly = Assembly.Load(JobManagerSettings.JobsLibraryAssemblyName);
             var classType = assembly.GetType(className);
@@ -61,22 +66,18 @@ namespace JobManager.JobManagerService.Business
             {
                 throw new InvalidOperationException(string.Format("Класс {0} не наследует класс JobWorkerBase", className));
             }
-            instance.OnEvent += OnEvent;
-            instance.OnEventSync += OnEventSync;
+            instance.OnEvent += OnEventHandler;
+            instance.OnEventSync += OnEventSyncHandler;
 
             var worker = new Worker
             {
                 Id = Guid.NewGuid(),
                 Job = job,
-                Instance = instance,
-                OperationContext = OperationContext.Current
+                Instance = instance
             };
             _workers.Add(worker);
 
-            // ГОВНОКОД!!!1 Никаких DTO на уровне логики быть не должно (здесь это ради улучшения быстродействия, чтобы не было лишних преобразований)
-            var workerDto = WorkerMapper.Mapper.DomainToDto(worker);
-
-            var task = new Task<TransferData>(() => instance.RunWrap(job.Data, workerDto));
+            var task = new Task<object>(() => instance.RunWrap(job.Data, worker));
             task.ContinueWith(t =>
                                   {
                                       var ex = t.Exception;
@@ -89,12 +90,12 @@ namespace JobManager.JobManagerService.Business
                                           var result = t.Result;
                                           OnEvent(null, new JobManagerEventArgs
                                                             {
-                                                                EventDto = new JobEventDto
-                                                                               {
-                                                                                   IsReturnResult = true,
-                                                                                   TransferData = result,
-                                                                                   Worker = workerDto
-                                                                               }
+                                                                Event = new JobEvent
+                                                                            {
+                                                                                IsReturnResult = true,
+                                                                                Data = result,
+                                                                                WorkerId = worker.Id
+                                                                            }
                                                             });
                                           GetWorkerAtId(worker.Id).Completed = true;
                                       }
@@ -105,12 +106,12 @@ namespace JobManager.JobManagerService.Business
             return worker;
         }
 
-        public TransferData Signal(WorkerDto workerDto, TransferData data)
+        public object Signal(Guid workerId, object data)
         {
             // ?? ПРОБЛЕМА: Что если Run завершился раньше функции Signal ?
             // ?? Что если слать сигнал после получения returnResult через событие
 
-            var worker = GetWorkerAtId(workerDto.Id);
+            var worker = GetWorkerAtId(workerId);
             if (worker == null)
             {
                 throw new ArgumentException("Worker not found");
@@ -124,7 +125,7 @@ namespace JobManager.JobManagerService.Business
 
             try
             {
-                return instance.SignalWrap(data.GetData());
+                return instance.SignalWrap(data);
             }
             catch
             {
@@ -134,23 +135,130 @@ namespace JobManager.JobManagerService.Business
             }
         }
 
-        public Guid RegisterJob(Job job)
+        public Job GetJob(Guid jobId)
         {
-            if (job.Id == Guid.Empty)
+            var job = GetJobAtId(jobId);
+            return job;
+        }
+
+        // Если джоба уже зашедулена, то exception (вначале нужно расшедулить ее)
+        // Если джобы нет в базе, она создается и шедулится
+        // Если джоба есть в базе, ее поля обновляются. Затем она шедулится
+        public Guid ScheduleJob(Job job)
+        {
+            if(ScheduledJob(job.Id))
             {
-                job.Id = Guid.NewGuid();
+                throw new InvalidOperationException("This job has been already scheduled");
             }
 
-            var jobRepository = IocContainer.Container.Resolve<IJobRepository>();
-            var unitOfWork = IocContainer.Container.Resolve<IUnitOfWork>();
-            var jobDb = JobMapper.Mapper.DomainToDb(job);
-            jobRepository.Add(jobDb);
-            unitOfWork.Commit();
+            Job scheduleJob;
 
+            var jobExistDb = GetJobDbAtId(job.Id);
+            var jobDb = JobMapper.Mapper.DomainToDb(job);
+            
+            if (jobExistDb == null)
+            {
+                _jobRepository.Add(jobDb);
+                _unitOfWork.Commit();
+                scheduleJob = job;
+            }
+            else
+            {
+                // Change job info
+                jobExistDb.ClassName = jobDb.ClassName;
+                jobExistDb.Data = jobDb.Data;
+                jobExistDb.Triggers = jobDb.Triggers;
+                _jobRepository.Update(jobExistDb);
+                _unitOfWork.Commit();
+                scheduleJob = JobMapper.Mapper.DbToDomain(jobExistDb);
+            }
+
+            QuartzScheduleJob(scheduleJob);
+            return scheduleJob.Id;
+        }
+
+        public void RescheduleJob(Guid jobId)
+        {
+        }
+
+        public bool UnscheduleJob(Guid jobId)
+        {
+            var job = GetJobAtId(jobId);
+            if (job == null)
+            {
+                throw new InvalidOperationException("Job not found");
+            }
+
+            var deleteResult = _scheduler.DeleteJob(JobKey(jobId));
+            return deleteResult;
+        }
+
+        public void DeleteJob(Guid jobId)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void OnEventHandler(object sender, JobManagerEventArgs eventArgs)
+        {
+            var workerId = eventArgs.Event.WorkerId;
+            var worker = GetWorkerAtId(workerId);
+            if (worker == null)
+            {
+                throw new ArgumentException("Worker not found");
+            }
+
+            OnEvent(this, eventArgs);
+        }
+
+        private object OnEventSyncHandler(object sender, JobManagerEventArgs eventArgs)
+        {
+            var workerId = eventArgs.Event.WorkerId;
+            var worker = GetWorkerAtId(workerId);
+            if (worker == null)
+            {
+                throw new ArgumentException("Worker not found");
+            }
+
+            var eventResult = OnEventSync(this, eventArgs);
+            return eventResult;
+        }
+
+        private Worker GetWorkerAtId(Guid workerId)
+        {
+            var worker = _workers.SingleOrDefault(w => w.Id == workerId);
+            return worker;
+        }
+
+        private Job GetJobAtId(Guid jobId)
+        {
+            var jobDb = GetJobDbAtId(jobId);
+            var job = JobMapper.Mapper.DbToDomain(jobDb);
+            return job;
+        }
+
+        private JobDb GetJobDbAtId(Guid jobId)
+        {
+            var jobDb = _jobRepository.GetById(jobId);
+            return jobDb;
+        }
+
+        private JobKey JobKey(Guid jobId)
+        {
+            return new JobKey(jobId.ToString());
+        }
+
+        private bool ScheduledJob(Guid jobId)
+        {
+            var result = _scheduler.CheckExists(JobKey(jobId));
+            return result;
+        }
+
+        private void QuartzScheduleJob(Job job)
+        {
             IDictionary jobDataDictionary = new Dictionary<string, object> { { "jobId", job.Id.ToString() } };
 
             var jobDetail = JobBuilder.Create<JobsDistributor>()
-                .WithIdentity(Guid.NewGuid().ToString())
+                .WithIdentity(job.Id.ToString())
                 .SetJobData(new JobDataMap(jobDataDictionary))
                 .Build();
 
@@ -167,45 +275,6 @@ namespace JobManager.JobManagerService.Business
             }
 
             _scheduler.ScheduleJob(jobDetail, triggers, true);
-
-            return job.Id;
-        }
-
-        private void OnEvent(object sender, JobManagerEventArgs eventArgs)
-        {
-            var workerId = eventArgs.EventDto.Worker.Id;
-            var worker = GetWorkerAtId(workerId);
-            if (worker == null)
-            {
-                throw new ArgumentException("Worker not found");
-            }
-
-            GetCallbackAtWorker(worker).OnEvent(eventArgs.EventDto);
-        }
-
-        private TransferData OnEventSync(object sender, JobManagerEventArgs eventArgs)
-        {
-            var workerId = eventArgs.EventDto.Worker.Id;
-            var worker = GetWorkerAtId(workerId);
-            if (worker == null)
-            {
-                throw new ArgumentException("Worker not found");
-            }
-
-            var eventResult = GetCallbackAtWorker(worker).OnEventSync(eventArgs.EventDto);
-            return eventResult;
-        }
-
-        private IJobManagerServiceCallback GetCallbackAtWorker(Worker worker)
-        {
-            var context = worker.OperationContext.GetCallbackChannel<IJobManagerServiceCallback>();
-            return context;
-        }
-
-        private Worker GetWorkerAtId(Guid workerId)
-        {
-            var worker = _workers.SingleOrDefault(w => w.Id == workerId);
-            return worker;
         }
     }
 }
