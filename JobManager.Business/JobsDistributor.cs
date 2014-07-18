@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using JobManager.Business;
+using JobManager.Business.Mappers;
 using JobManager.Data.Database.Repositories.Abstract.Interfaces;
 using JobManager.Data.Ioc;
-using JobManager.Data.Mappers;
 using Quartz;
 
-namespace JobManager.Data.Business
+namespace JobManager.Business
 {
     public class JobsDistributor : IJob
     {

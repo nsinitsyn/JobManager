@@ -80,6 +80,9 @@
     <None Include="Properties\DataSources\JobManager.Data.DTO.JobOutputDataBase.datasource" />
     <None Include="Properties\DataSources\JobManager.Data.DTO.TransferData.datasource" />
     <None Include="Properties\DataSources\JobManager.Data.DTO.WorkerDto.datasource" />
+    <None Include="Properties\DataSources\JobManager.Transfer.Data.DTO.JobDto.datasource" />
+    <None Include="Properties\DataSources\JobManager.Transfer.Data.DTO.TransferData.datasource" />
+    <None Include="Properties\DataSources\JobManager.Transfer.Data.DTO.WorkerDto.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -89,15 +92,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="Service References\JobManagerReference\Client.JobManagerReference.JobDto.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\JobManagerReference\Client.JobManagerReference.TransferData.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\JobManagerReference\Client.JobManagerReference.WorkerDto.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
     <None Include="Service References\JobManagerReference\JobManagerService.wsdl" />
     <None Include="Service References\JobManagerReference\JobManagerService.xsd">
       <SubType>Designer</SubType>
@@ -121,6 +115,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\JobManager.Transfer.Data\JobManager.Transfer.Data.csproj">
+      <Project>{e463a256-bb45-4ea5-bc9e-d24c646e4d71}</Project>
+      <Name>JobManager.Transfer.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\JobsLibraryTest\JobsLibraryTest.csproj">
       <Project>{ef0ad986-2c65-438a-964a-1cd2de0b2b0a}</Project>
       <Name>JobsLibraryTest</Name>

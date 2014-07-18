@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{65F9427B-1073-4952-B569-6981CE5EB8DA}</ProjectGuid>
+    <ProjectGuid>{07A429F5-BB1F-42B4-88ED-F937BC07FF5C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>JobManager.Data</RootNamespace>
-    <AssemblyName>JobManager.Data</AssemblyName>
+    <RootNamespace>JobManager.Business</RootNamespace>
+    <AssemblyName>JobManager.Business</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,26 +30,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Castle.Core">
-      <HintPath>..\packages\Castle.Core.3.3.0\lib\net45\Castle.Core.dll</HintPath>
-    </Reference>
     <Reference Include="Castle.Windsor">
       <HintPath>..\packages\Castle.Windsor.3.3.0\lib\net45\Castle.Windsor.dll</HintPath>
     </Reference>
-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    <Reference Include="Quartz">
+      <HintPath>..\packages\Quartz.2.2.3\lib\net40\Quartz.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -57,35 +46,34 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Database\DataContext.cs" />
-    <Compile Include="Database\DbManager.cs" />
-    <Compile Include="Database\Entities\BaseEntity.cs" />
-    <Compile Include="Database\Entities\JobDb.cs" />
-    <Compile Include="Database\Entities\TriggerDb.cs" />
-    <Compile Include="Database\Repositories\Abstract\BaseRepository.cs" />
-    <Compile Include="Database\Repositories\Abstract\Interfaces\IBaseRepository.cs" />
-    <Compile Include="Database\Repositories\Abstract\Interfaces\IJobRepository.cs" />
-    <Compile Include="Database\Repositories\JobRepository.cs" />
-    <Compile Include="Database\UnitOfWork\IUnitOfWork.cs" />
-    <Compile Include="Database\UnitOfWork\UnitOfWork.cs" />
-    <Compile Include="Ioc\DataInstaller.cs" />
-    <Compile Include="Ioc\IocContainer.cs" />
-    <Compile Include="Ioc\RepositoriesInstaller.cs" />
-    <Compile Include="Migrations\Configuration.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Domain\Job.cs" />
+    <Compile Include="Domain\JobEvent.cs" />
+    <Compile Include="Domain\Trigger.cs" />
+    <Compile Include="Domain\Worker.cs" />
+    <Compile Include="Events\JobManagerEventArgs.cs" />
+    <Compile Include="Events\JobManagerEventHandler.cs" />
+    <Compile Include="JobManagerSettings.cs" />
+    <Compile Include="JobRunner.cs" />
+    <Compile Include="JobsDistributor.cs" />
+    <Compile Include="JobWorkerBase.cs" />
+    <Compile Include="Mappers\BaseDomainDbMapper.cs" />
+    <Compile Include="Mappers\JobMapper.cs" />
+    <Compile Include="Mappers\TriggerMapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\Serializator.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="job_scheduling_data_2_0.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Database\Sql\CreateQuartzTables.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <ProjectReference Include="..\JobManager.Data\JobManager.Data.csproj">
+      <Project>{65f9427b-1073-4952-b569-6981ce5eb8da}</Project>
+      <Name>JobManager.Data</Name>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

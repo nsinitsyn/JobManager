@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
+using JobManager.Business.Domain;
 using JobManager.Data.Database.Entities;
-using JobManager.Data.Database.Repositories.Abstract.Interfaces;
-using JobManager.Data.Database.UnitOfWork;
-using JobManager.Data.Domain;
-using JobManager.Data.Ioc;
-using JobManager.Data.Utilities;
+using Serializator = JobManager.Business.Utilities.Serializator;
 
-namespace JobManager.Data.Mappers
+namespace JobManager.Business.Mappers
 {
     public class JobMapper : BaseDomainDbMapper<Job, JobDb>
     {

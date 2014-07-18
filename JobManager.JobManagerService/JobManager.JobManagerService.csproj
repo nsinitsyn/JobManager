@@ -54,11 +54,6 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DTO\JobDto.cs" />
-    <Compile Include="DTO\JobEventDto.cs" />
-    <Compile Include="DTO\TransferData.cs" />
-    <Compile Include="DTO\TriggerDto.cs" />
-    <Compile Include="DTO\WorkerDto.cs" />
     <Compile Include="IJobManagerService.cs" />
     <Compile Include="IJobManagerServiceCallback.cs" />
     <Compile Include="Mappers\BaseDtoMapper.cs" />
@@ -70,13 +65,21 @@
     <Compile Include="JobManagerService.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\JobManager.Business\JobManager.Business.csproj">
+      <Project>{07a429f5-bb1f-42b4-88ed-f937bc07ff5c}</Project>
+      <Name>JobManager.Business</Name>
+    </ProjectReference>
     <ProjectReference Include="..\JobManager.Data\JobManager.Data.csproj">
       <Project>{65f9427b-1073-4952-b569-6981ce5eb8da}</Project>
       <Name>JobManager.Data</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
+    <ProjectReference Include="..\JobManager.Transfer.Data\JobManager.Transfer.Data.csproj">
+      <Project>{e463a256-bb45-4ea5-bc9e-d24c646e4d71}</Project>
+      <Name>JobManager.Transfer.Data</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\WCF\Microsoft.VisualStudio.ServiceModel.targets" />

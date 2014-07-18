@@ -10,15 +10,11 @@ using System.ServiceModel;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using JobManager.Business;
+using JobManager.Business.Events;
 using JobManager.Data;
-using JobManager.Data.Business;
-using JobManager.Data.Database.Entities;
-using JobManager.Data.Database.Repositories.Abstract.Interfaces;
-using JobManager.Data.Database.UnitOfWork;
-using JobManager.Data.Domain;
-using JobManager.Data.Mappers;
-using JobManager.JobManagerService.DTO;
 using JobManager.JobManagerService.Mappers;
+using JobManager.Transfer.Data.DTO;
 using JobEventMapper = JobManager.JobManagerService.Mappers.JobEventDtoMapper;
 
 namespace JobManager.JobManagerService

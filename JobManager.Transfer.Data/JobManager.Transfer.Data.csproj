@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{EF0AD986-2C65-438A-964A-1CD2DE0B2B0A}</ProjectGuid>
+    <ProjectGuid>{E463A256-BB45-4EA5-BC9E-D24C646E4D71}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>JobsLibraryTest</RootNamespace>
-    <AssemblyName>JobsLibraryTest</AssemblyName>
+    <RootNamespace>JobManager.Transfer.Data</RootNamespace>
+    <AssemblyName>JobManager.Transfer.Data</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,13 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -44,10 +40,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="JobWorker2.cs" />
-    <Compile Include="JobWorkerOutput.cs" />
-    <Compile Include="JobWorker.cs" />
-    <Compile Include="Parameters\JobWorkerParameters.cs" />
+    <Compile Include="DTO\JobDto.cs" />
+    <Compile Include="DTO\JobEventDto.cs" />
+    <Compile Include="DTO\TransferData.cs" />
+    <Compile Include="DTO\TriggerDto.cs" />
+    <Compile Include="DTO\WorkerDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -55,22 +52,8 @@
       <Project>{07a429f5-bb1f-42b4-88ed-f937bc07ff5c}</Project>
       <Name>JobManager.Business</Name>
     </ProjectReference>
-    <ProjectReference Include="..\JobManager.Data\JobManager.Data.csproj">
-      <Project>{65f9427b-1073-4952-b569-6981ce5eb8da}</Project>
-      <Name>JobManager.Data</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Tests.Utilities\Tests.Utilities.csproj">
-      <Project>{fd47f3dd-8b2f-4235-94c6-67d47113ac02}</Project>
-      <Name>Tests.Utilities</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>xcopy "$(ProjectDir)bin\Debug" "$(SolutionDir)JobManager.WinService\bin\Debug" /s /i /y</PostBuildEvent>
-  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using JobManager.Data.Domain;
-using JobManager.JobManagerService.DTO;
+using JobManager.Business.Domain;
+using JobManager.Transfer.Data.DTO;
 
 namespace JobManager.JobManagerService.Mappers
 {

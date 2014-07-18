@@ -1,7 +1,7 @@
 ﻿using System;
-using JobManager.Data.Domain;
+using JobManager.Business.Domain;
 
-namespace JobManager.Data
+namespace JobManager.Business.Events
 {
     public class JobManagerEventArgs : EventArgs
     {

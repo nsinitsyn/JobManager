@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace JobManager.JobManagerService.DTO
+namespace JobManager.Transfer.Data.DTO
 {
     [DataContract]
     public class JobDto

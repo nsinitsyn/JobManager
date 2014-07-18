@@ -4,7 +4,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
-using JobManager.JobManagerService.DTO;
+using JobManager.Transfer.Data.DTO;
 
 namespace JobManager.JobManagerService
 {

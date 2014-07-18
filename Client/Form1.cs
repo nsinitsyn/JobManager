@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Client.JobManagerReference;
+using JobManager.Transfer.Data.DTO;
 using JobsLibraryTest;
 using JobsLibraryTest.Parameters;
 using Tests.Utilities;
@@ -45,7 +46,7 @@ namespace Client
             var workerDto = client.RunJob(jobDto);
             WorkersKeeper.Worker1 = workerDto.Id;
             Thread.Sleep(2000);
-            client.Signal(workerDto, new TransferData("stop"));
+            client.Signal(workerDto.Id, new TransferData("stop"));
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -72,7 +73,7 @@ namespace Client
                                }
             };
 
-            var jobId = client.RegisterJob(jobDto);
+            var jobId = client.ScheduleJob(jobDto);
         }
     }
 }

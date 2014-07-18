@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using JobManager.Business.Domain;
+using JobManager.Business.Mappers;
 using JobManager.Data.Database.Entities;
-using JobManager.Data.Domain;
 
-namespace JobManager.Data.Mappers
+namespace JobManager.Business.Mappers
 {
     public class TriggerMapper : BaseDomainDbMapper<Trigger, TriggerDb>
     {

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Client.JobManagerReference;
+using JobManager.Transfer.Data.DTO;
 using JobsLibraryTest;
 
 namespace Client

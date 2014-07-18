@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using JobManager.Data.Utilities;
+using JobManager.Business.Utilities;
 
-namespace JobManager.JobManagerService.DTO
+namespace JobManager.Transfer.Data.DTO
 {
     [DataContract]
     public class TransferData

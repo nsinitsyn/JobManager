@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using JobManager.Data;
 
-namespace JobManager.Data
+namespace JobManager.Business.Events
 {
     public delegate void JobManagerEventHandler(object sender, JobManagerEventArgs e);
     public delegate object JobManagerEventSyncHandler(object sender, JobManagerEventArgs e);

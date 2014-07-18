@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using JobManager.Data.Domain;
+﻿using JobManager.Business.Domain;
+using JobManager.Business.Events;
 
-namespace JobManager.Data.Business
+namespace JobManager.Business
 {
     public abstract class JobWorkerBase
     {

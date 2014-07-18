@@ -1,6 +1,6 @@
 ﻿using System;
-using JobManager.Data.Domain;
-using JobManager.JobManagerService.DTO;
+using JobManager.Business.Domain;
+using JobManager.Transfer.Data.DTO;
 
 namespace JobManager.JobManagerService.Mappers
 {

@@ -3,19 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
+using JobManager.Business.Domain;
+using JobManager.Business.Events;
+using JobManager.Business.Mappers;
 using JobManager.Data.Database.Entities;
 using JobManager.Data.Database.Repositories.Abstract.Interfaces;
 using JobManager.Data.Database.UnitOfWork;
-using JobManager.Data.Domain;
 using JobManager.Data.Ioc;
-using JobManager.Data.Mappers;
 using Quartz;
 using Quartz.Impl;
-using QuartzLib = Quartz;
 
-namespace JobManager.Data.Business
+namespace JobManager.Business
 {
     // Singleton
     public class JobRunner
@@ -263,7 +262,7 @@ namespace JobManager.Data.Business
                 .SetJobData(new JobDataMap(jobDataDictionary))
                 .Build();
 
-            var triggers = new QuartzLib.Collection.HashSet<ITrigger>();
+            var triggers = new Quartz.Collection.HashSet<ITrigger>();
 
             foreach (var jobTrigger in job.Triggers)
             {

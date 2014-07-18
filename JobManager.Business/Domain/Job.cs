@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using JobManager.Data.Business;
 
-namespace JobManager.Data.Domain
+namespace JobManager.Business.Domain
 {
     public class Job
     {
