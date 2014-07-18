@@ -82,22 +82,14 @@
     <Compile Include="Domain\JobEvent.cs" />
     <Compile Include="Domain\Trigger.cs" />
     <Compile Include="Domain\Worker.cs" />
-    <Compile Include="DTO\JobDto.cs" />
-    <Compile Include="DTO\JobEventDto.cs" />
-    <Compile Include="DTO\TransferData.cs" />
-    <Compile Include="DTO\TriggerDto.cs" />
-    <Compile Include="DTO\WorkerDto.cs" />
     <Compile Include="Ioc\DataInstaller.cs" />
     <Compile Include="Ioc\IocContainer.cs" />
     <Compile Include="Ioc\RepositoriesInstaller.cs" />
     <Compile Include="JobManagerEventArgs.cs" />
     <Compile Include="JobManagerEventHandler.cs" />
-    <Compile Include="Mappers\BaseMapper.cs" />
-    <Compile Include="Mappers\DtoDomainMapper.cs" />
-    <Compile Include="Mappers\JobEventMapper.cs" />
+    <Compile Include="Mappers\BaseDomainDbMapper.cs" />
     <Compile Include="Mappers\JobMapper.cs" />
     <Compile Include="Mappers\TriggerMapper.cs" />
-    <Compile Include="Mappers\WorkerMapper.cs" />
     <Compile Include="Migrations\Configuration.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -1,5 +1,4 @@
 ﻿using System;
-using JobManager.Data.DTO;
 using JobManager.Data.Domain;
 
 namespace JobManager.Data

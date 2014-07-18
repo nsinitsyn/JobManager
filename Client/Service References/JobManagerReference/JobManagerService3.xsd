@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xs:schema xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:tns="http://schemas.datacontract.org/2004/07/JobManager.Data.DTO" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/JobManager.Data.DTO" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:tns="http://schemas.datacontract.org/2004/07/JobManager.JobManagerService.DTO" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/JobManager.JobManagerService.DTO" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:import schemaLocation="http://localhost:8000/JobManagerService?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
   <xs:import schemaLocation="http://localhost:8000/JobManagerService?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/System.IO" />
   <xs:complexType name="JobDto">
@@ -7,6 +7,7 @@
       <xs:element minOccurs="0" name="ClassName" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="Data" nillable="true" type="tns:TransferData" />
       <xs:element minOccurs="0" name="Id" type="ser:guid" />
+      <xs:element minOccurs="0" name="Scheduled" type="xs:boolean" />
       <xs:element minOccurs="0" name="Triggers" nillable="true" type="tns:ArrayOfTriggerDto" />
     </xs:sequence>
   </xs:complexType>

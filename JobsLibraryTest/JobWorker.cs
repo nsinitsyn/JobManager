@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using JobManager.Data.Business;
-using JobManager.Data.DTO;
 using JobManager.Data.Utilities;
 using JobsLibraryTest.Parameters;
 using Tests.Utilities;

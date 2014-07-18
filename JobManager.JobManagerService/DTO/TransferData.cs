@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using JobManager.Data.Utilities;
 
-namespace JobManager.Data.DTO
+namespace JobManager.JobManagerService.DTO
 {
     [DataContract]
     public class TransferData

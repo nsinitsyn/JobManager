@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JobManager.Data.DTO
+namespace JobManager.JobManagerService.DTO
 {
     public class WorkerDto
     {

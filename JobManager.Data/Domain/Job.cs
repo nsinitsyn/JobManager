@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using JobManager.Data.Business;
-using JobManager.Data.DTO;
 
 namespace JobManager.Data.Domain
 {

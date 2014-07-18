@@ -12,8 +12,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Client.JobManagerReference;
-using JobManager.Data.DTO;
-using JobManager.Data.Utilities;
 using JobsLibraryTest;
 using JobsLibraryTest.Parameters;
 using Tests.Utilities;

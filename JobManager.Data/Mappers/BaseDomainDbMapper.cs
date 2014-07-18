@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace JobManager.Data.Mappers
 {
-    public abstract class DtoDomainMapper<TDto, TDomain>
+    public abstract class BaseDomainDbMapper<TDomain, TDb>
     {
-        public abstract TDto DomainToDto(TDomain domain);
-        public abstract TDomain DtoToDomain(TDto dto);
+        public abstract TDomain DbToDomain(TDb db);
+        public abstract TDb DomainToDb(TDomain domain);
     }
 }

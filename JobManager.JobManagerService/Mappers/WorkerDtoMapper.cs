@@ -1,22 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using JobManager.Data.DTO;
-using JobManager.Data.Database.Entities;
-using JobManager.Data.Domain;
+﻿using JobManager.Data.Domain;
+using JobManager.JobManagerService.DTO;
 
-namespace JobManager.Data.Mappers
+namespace JobManager.JobManagerService.Mappers
 {
-    public class WorkerMapper : DtoDomainMapper<WorkerDto, Worker>
+    public class WorkerDtoMapper : BaseDtoMapper<WorkerDto, Worker>
     {
-        static WorkerMapper()
+        static WorkerDtoMapper()
         {
-            Mapper = new WorkerMapper();
+            Mapper = new WorkerDtoMapper();
         }
 
-        public static WorkerMapper Mapper { get; set; }
+        public static WorkerDtoMapper Mapper { get; set; }
 
         public override WorkerDto DomainToDto(Worker worker)
         {

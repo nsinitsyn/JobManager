@@ -4,8 +4,8 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.Text;
-using JobManager.Data.DTO;
 using JobManager.Data.Domain;
+using JobManager.JobManagerService.DTO;
 
 namespace JobManager.JobManagerService
 {

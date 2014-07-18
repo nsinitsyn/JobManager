@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using JobManager.Data.DTO;
 using JobManager.Data.Database.Entities;
 using JobManager.Data.Domain;
 
 namespace JobManager.Data.Mappers
 {
-    public class TriggerMapper : BaseMapper<TriggerDto, Trigger, TriggerDb>
+    public class TriggerMapper : BaseDomainDbMapper<Trigger, TriggerDb>
     {
         static TriggerMapper()
         {
@@ -44,34 +43,6 @@ namespace JobManager.Data.Mappers
                                     Cron = trigger.Cron
                                 };
             return triggerDb;
-        }
-
-        public override TriggerDto DomainToDto(Trigger trigger)
-        {
-            if (trigger == null)
-            {
-                return null;
-            }
-
-            var triggerDto = new TriggerDto
-                                 {
-                                     Cron = trigger.Cron
-                                 };
-            return triggerDto;
-        }
-
-        public override Trigger DtoToDomain(TriggerDto triggerDto)
-        {
-            if (triggerDto == null)
-            {
-                return null;
-            }
-
-            var trigger = new Trigger
-                              {
-                                  Cron = triggerDto.Cron
-                              };
-            return trigger;
         }
     }
 }

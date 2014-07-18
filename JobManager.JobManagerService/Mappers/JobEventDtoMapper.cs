@@ -1,23 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using JobManager.Data.DTO;
 using JobManager.Data.Domain;
+using JobManager.JobManagerService.DTO;
 
-namespace JobManager.Data.Mappers
+namespace JobManager.JobManagerService.Mappers
 {
-    public class JobEventMapper
+    public class JobEventDtoMapper : BaseDtoMapper<JobEventDto, JobEvent>
     {
-        static JobEventMapper()
+        static JobEventDtoMapper()
         {
-            Mapper = new JobEventMapper();
+            Mapper = new JobEventDtoMapper();
         }
 
-        public static JobEventMapper Mapper { get; set; }
+        public static JobEventDtoMapper Mapper { get; set; }
 
-        public JobEventDto DomainToDto(JobEvent jobEvent)
+        public override JobEventDto DomainToDto(JobEvent jobEvent)
         {
             if (jobEvent == null)
             {
@@ -33,7 +29,7 @@ namespace JobManager.Data.Mappers
             return eventDto;
         }
 
-        public JobEvent DtoToDomain(JobEventDto jobEventDto)
+        public override JobEvent DtoToDomain(JobEventDto jobEventDto)
         {
             throw new NotImplementedException();
         }
