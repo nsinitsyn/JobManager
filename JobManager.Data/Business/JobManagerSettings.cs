@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JobManager.JobManagerService
+namespace JobManager.Data.Business
 {
     public static class JobManagerSettings
     {
@@ -14,7 +14,7 @@ namespace JobManager.JobManagerService
 
         public static string JobsLibraryAssemblyName
         {
-            get 
+            get
             {
                 return _jobsLibraryAssemblyName ?? (_jobsLibraryAssemblyName = ConfigurationManager.AppSettings[JobsLibraryAssemblyNameKey]);
             }

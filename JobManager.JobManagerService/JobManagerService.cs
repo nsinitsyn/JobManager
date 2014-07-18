@@ -18,12 +18,6 @@ using JobManager.Data.Database.Repositories.Abstract.Interfaces;
 using JobManager.Data.Database.UnitOfWork;
 using JobManager.Data.Domain;
 using JobManager.Data.Mappers;
-using JobManager.JobManagerService.Business;
-using JobManager.JobManagerService.Ioc;
-using JobManager.JobManagerService.Quartz;
-using Quartz;
-using Quartz.Impl;
-using QuartzLib = Quartz;
 
 namespace JobManager.JobManagerService
 {
@@ -74,11 +68,11 @@ namespace JobManager.JobManagerService
             return jobId;
         }
 
-        public void RescheduleJob(Guid jobId)
+        public void RescheduleJob(JobDto jobDto)
         {
-            JobRunner.Runner.RescheduleJob(jobId);
+            var job = JobMapper.Mapper.DtoToDomain(jobDto);
+            JobRunner.Runner.RescheduleJob(job);
         }
-
         public void UnscheduleJob(Guid jobId)
         {
             JobRunner.Runner.UnscheduleJob(jobId);

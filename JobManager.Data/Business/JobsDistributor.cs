@@ -1,23 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
-using Castle.Windsor;
-using Castle.Windsor.Installer;
-using JobManager.Data;
-using JobManager.Data.Business;
-using JobManager.Data.DTO;
 using JobManager.Data.Database.Repositories.Abstract.Interfaces;
-using JobManager.Data.Domain;
+using JobManager.Data.Ioc;
 using JobManager.Data.Mappers;
-using JobManager.JobManagerService.Business;
-using JobManager.JobManagerService.Ioc;
 using Quartz;
 
-namespace JobManager.JobManagerService.Quartz
+namespace JobManager.Data.Business
 {
     public class JobsDistributor : IJob
     {

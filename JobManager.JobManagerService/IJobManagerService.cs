@@ -13,7 +13,7 @@ namespace JobManager.JobManagerService
     public interface IJobManagerService
     {
         [OperationContract]
-        WorkerDto RunJob(JobDto job);
+        WorkerDto RunJob(JobDto jobDto);
 
         [OperationContract]
         TransferData Signal(Guid workerId, TransferData data);
@@ -22,10 +22,10 @@ namespace JobManager.JobManagerService
         JobDto GetJob(Guid jobId);
 
         [OperationContract]
-        Guid ScheduleJob(JobDto job); // регит джобу в нашей базе и в quartz
+        Guid ScheduleJob(JobDto jobDto); // регит джобу в нашей базе и в quartz
 
         [OperationContract]
-        void RescheduleJob(JobDto job);
+        void RescheduleJob(JobDto jobDto);
 
         [OperationContract]
         void UnscheduleJob(Guid jobId); // удаляет джобу из базы quartz (делает ее невыполняющейся), в нашей оставляет

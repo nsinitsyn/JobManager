@@ -32,16 +32,6 @@ namespace JobManager.Data.Mappers
             return trigger;
         }
 
-        public override TriggerDto DbToDTo(TriggerDb triggerDb)
-        {
-            if (triggerDb == null)
-            {
-                return null;
-            }
-
-            return null;
-        }
-
         public override TriggerDb DomainToDb(Trigger trigger)
         {
             if (trigger == null)
@@ -68,20 +58,6 @@ namespace JobManager.Data.Mappers
                                      Cron = trigger.Cron
                                  };
             return triggerDto;
-        }
-
-        public override TriggerDb DtoToDb(TriggerDto triggerDto)
-        {
-            if (triggerDto == null)
-            {
-                return null;
-            }
-
-            var triggerDb = new TriggerDb
-                                {
-                                    Cron = triggerDto.Cron
-                                };
-            return triggerDb;
         }
 
         public override Trigger DtoToDomain(TriggerDto triggerDto)

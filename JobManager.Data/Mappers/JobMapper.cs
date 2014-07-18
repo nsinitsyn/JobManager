@@ -40,16 +40,6 @@ namespace JobManager.Data.Mappers
             return job;
         }
 
-        public override JobDto DbToDTo(JobDb jobDb)
-        {
-            if (jobDb == null)
-            {
-                return null;
-            }
-
-            return null;
-        }
-
         public override JobDb DomainToDb(Job job)
         {
             if (job == null)
@@ -79,28 +69,11 @@ namespace JobManager.Data.Mappers
                                  Id = job.Id,
                                  ClassName = job.ClassName,
                                  Data = new TransferData(job.Data),
-                                 Triggers = job.Triggers.Select(TriggerMapper.Mapper.DomainToDto).ToList()
+                                 Triggers = job.Triggers.Select(TriggerMapper.Mapper.DomainToDto).ToList(),
+                                 Scheduled = job.Scheduled
                              };
 
             return jobDto;
-        }
-
-        public override JobDb DtoToDb(JobDto jobDto)
-        {
-            if (jobDto == null)
-            {
-                return null;
-            }
-
-            var jobDb = new JobDb
-                            {
-                                Id = jobDto.Id,
-                                ClassName = jobDto.ClassName,
-                                Data = Serializator.SerializeToString(jobDto.Data.GetData()),
-                                Triggers = jobDto.Triggers.Select(TriggerMapper.Mapper.DtoToDb).ToList()
-                            };
-
-            return jobDb;
         }
 
         public override Job DtoToDomain(JobDto jobDto)
