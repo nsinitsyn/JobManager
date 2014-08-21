@@ -33,6 +33,12 @@ namespace Client.JobManagerReference {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IJobManagerService/GetJob", ReplyAction="http://tempuri.org/IJobManagerService/GetJobResponse")]
         System.Threading.Tasks.Task<JobManager.Transfer.Data.DTO.JobDto> GetJobAsync(System.Guid jobId);
         
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IJobManagerService/GetWorkers", ReplyAction="http://tempuri.org/IJobManagerService/GetWorkersResponse")]
+        JobManager.Transfer.Data.DTO.WorkerDto[] GetWorkers();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IJobManagerService/GetWorkers", ReplyAction="http://tempuri.org/IJobManagerService/GetWorkersResponse")]
+        System.Threading.Tasks.Task<JobManager.Transfer.Data.DTO.WorkerDto[]> GetWorkersAsync();
+        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IJobManagerService/ScheduleJob", ReplyAction="http://tempuri.org/IJobManagerService/ScheduleJobResponse")]
         System.Guid ScheduleJob(JobManager.Transfer.Data.DTO.JobDto jobDto);
         
@@ -56,6 +62,24 @@ namespace Client.JobManagerReference {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IJobManagerService/DeleteJob", ReplyAction="http://tempuri.org/IJobManagerService/DeleteJobResponse")]
         System.Threading.Tasks.Task DeleteJobAsync(System.Guid jobId);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IJobManagerService/SubscribeClientContext", ReplyAction="http://tempuri.org/IJobManagerService/SubscribeClientContextResponse")]
+        void SubscribeClientContext();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IJobManagerService/SubscribeClientContext", ReplyAction="http://tempuri.org/IJobManagerService/SubscribeClientContextResponse")]
+        System.Threading.Tasks.Task SubscribeClientContextAsync();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IJobManagerService/UnsubscribeClientContext", ReplyAction="http://tempuri.org/IJobManagerService/UnsubscribeClientContextResponse")]
+        void UnsubscribeClientContext();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IJobManagerService/UnsubscribeClientContext", ReplyAction="http://tempuri.org/IJobManagerService/UnsubscribeClientContextResponse")]
+        System.Threading.Tasks.Task UnsubscribeClientContextAsync();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IJobManagerService/SetClientContextToWorker", ReplyAction="http://tempuri.org/IJobManagerService/SetClientContextToWorkerResponse")]
+        void SetClientContextToWorker(System.Guid workerId);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IJobManagerService/SetClientContextToWorker", ReplyAction="http://tempuri.org/IJobManagerService/SetClientContextToWorkerResponse")]
+        System.Threading.Tasks.Task SetClientContextToWorkerAsync(System.Guid workerId);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -67,8 +91,11 @@ namespace Client.JobManagerReference {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IJobManagerService/OnEventSync", ReplyAction="http://tempuri.org/IJobManagerService/OnEventSyncResponse")]
         JobManager.Transfer.Data.DTO.TransferData OnEventSync(JobManager.Transfer.Data.DTO.JobEventDto eventDto);
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IJobManagerService/WorkerWasStarted")]
-        void WorkerWasStarted(JobManager.Transfer.Data.DTO.WorkerDto worker);
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IJobManagerService/WorkerWillBeStarted")]
+        void WorkerWillBeStarted(JobManager.Transfer.Data.DTO.WorkerDto worker);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IJobManagerService/ClientIdentifier", ReplyAction="http://tempuri.org/IJobManagerService/ClientIdentifierResponse")]
+        System.Guid ClientIdentifier();
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -123,6 +150,14 @@ namespace Client.JobManagerReference {
             return base.Channel.GetJobAsync(jobId);
         }
         
+        public JobManager.Transfer.Data.DTO.WorkerDto[] GetWorkers() {
+            return base.Channel.GetWorkers();
+        }
+        
+        public System.Threading.Tasks.Task<JobManager.Transfer.Data.DTO.WorkerDto[]> GetWorkersAsync() {
+            return base.Channel.GetWorkersAsync();
+        }
+        
         public System.Guid ScheduleJob(JobManager.Transfer.Data.DTO.JobDto jobDto) {
             return base.Channel.ScheduleJob(jobDto);
         }
@@ -153,6 +188,30 @@ namespace Client.JobManagerReference {
         
         public System.Threading.Tasks.Task DeleteJobAsync(System.Guid jobId) {
             return base.Channel.DeleteJobAsync(jobId);
+        }
+        
+        public void SubscribeClientContext() {
+            base.Channel.SubscribeClientContext();
+        }
+        
+        public System.Threading.Tasks.Task SubscribeClientContextAsync() {
+            return base.Channel.SubscribeClientContextAsync();
+        }
+        
+        public void UnsubscribeClientContext() {
+            base.Channel.UnsubscribeClientContext();
+        }
+        
+        public System.Threading.Tasks.Task UnsubscribeClientContextAsync() {
+            return base.Channel.UnsubscribeClientContextAsync();
+        }
+        
+        public void SetClientContextToWorker(System.Guid workerId) {
+            base.Channel.SetClientContextToWorker(workerId);
+        }
+        
+        public System.Threading.Tasks.Task SetClientContextToWorkerAsync(System.Guid workerId) {
+            return base.Channel.SetClientContextToWorkerAsync(workerId);
         }
     }
 }

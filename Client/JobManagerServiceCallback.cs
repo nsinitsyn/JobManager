@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
@@ -19,7 +20,7 @@ namespace Client
             {
                 if (eventDto.IsReturnResult)
                 {
-                    var returnResult = eventDto.TransferData.GetData() as JobWorkerOutput;           
+                    var returnResult = eventDto.TransferData.GetData() as JobWorkerOutput;
                     //Thread.Sleep(8000);
                 }
                 else
@@ -54,9 +55,23 @@ namespace Client
             return null;
         }
 
-        public void WorkerWasStarted(WorkerDto worker)
+        public void WorkerWillBeStarted(WorkerDto worker)
         {
-            throw new NotImplementedException();
+            // Если эта джоба была запущена не нами, то подписаться на ее эвенты
+            // ...
+
+            Thread.Sleep(6000);
+
+            var context = new InstanceContext(new JobManagerServiceCallback());
+            var client = new JobManagerServiceClient(context);
+            client.SetClientContextToWorker(worker.Id);
+        }
+
+        public Guid ClientIdentifier()
+        {
+            var clientId = ConfigurationManager.AppSettings["JobManagerClientIdentifier"];
+            var clientGuid = Guid.Parse(clientId);
+            return clientGuid;
         }
     }
 }

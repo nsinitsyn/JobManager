@@ -23,11 +23,13 @@ namespace JobManager.JobManagerService
     public class JobManagerService : IJobManagerService
     {
         private readonly Dictionary<Guid, OperationContext> _workerContexts = new Dictionary<Guid, OperationContext>();
+        private readonly Dictionary<Guid, OperationContext> _eventSubscribers = new Dictionary<Guid, OperationContext>();
 
         public JobManagerService()
         {
             JobRunner.Runner.OnEvent += OnEventHandler;
             JobRunner.Runner.OnEventSync += OnEventSyncHandler;
+            JobRunner.Runner.OnWorkerWillBeStarted += OnWorkerWillBeStartedHandler;
         }
 
         public WorkerDto RunJob(JobDto jobDto)
@@ -53,6 +55,13 @@ namespace JobManager.JobManagerService
             var job = JobRunner.Runner.GetJob(jobId);
             var jobDto = JobDtoMapper.Mapper.DomainToDto(job);
             return jobDto;
+        }
+
+        public List<WorkerDto> GetWorkers()
+        {
+            var workers = JobRunner.Runner.GetWorkers();
+            var workerDtos = workers.Select(WorkerDtoMapper.Mapper.DomainToDto).ToList();
+            return workerDtos;
         }
 
         public Guid ScheduleJob(JobDto jobDto)
@@ -81,12 +90,55 @@ namespace JobManager.JobManagerService
             JobRunner.Runner.DeleteJob(jobId);
         }
 
+        public void SubscribeClientContext()
+        {
+            var currentContext = OperationContext.Current;
+            var curContextId = Callback(currentContext).ClientIdentifier();
+            if (!_eventSubscribers.ContainsKey(curContextId))
+            {
+                _eventSubscribers[curContextId] = currentContext;
+            }
+            else
+            {
+                throw new InvalidOperationException("This client has been already subscribed");
+            }
+        }
+
+        public void UnsubscribeClientContext()
+        {
+            var currentContext = OperationContext.Current;
+            var curContextId = Callback(currentContext).ClientIdentifier();
+            if (_eventSubscribers.ContainsKey(curContextId))
+            {
+                _eventSubscribers.Remove(curContextId);
+            }
+            else
+            {
+                throw new InvalidOperationException("This client is not subscribed");
+            }
+        }
+
+        public void SetClientContextToWorker(Guid workerId)
+        {
+            if (_workerContexts[workerId] != null)
+            {
+                throw new InvalidOperationException("This worker has been already has client context");
+            }
+            _workerContexts[workerId] = OperationContext.Current;
+        }
+
+        private IJobManagerServiceCallback Callback(OperationContext context)
+        {
+            return context.GetCallbackChannel<IJobManagerServiceCallback>();
+        }
+
         private void OnEventHandler(object sender, JobManagerEventArgs eventArgs)
         {
             var eventDto = JobEventDtoMapper.Mapper.DomainToDto(eventArgs.Event);
 
             var context = _workerContexts[eventDto.WorkerId];
-            context.GetCallbackChannel<IJobManagerServiceCallback>().OnEvent(eventDto);
+            // Если context не найден, то сообщить об этом воркеру
+            Callback(context).OnEvent(eventDto);
         }
 
         private object OnEventSyncHandler(object sender, JobManagerEventArgs eventArgs)
@@ -94,8 +146,22 @@ namespace JobManager.JobManagerService
             var eventDto = JobEventDtoMapper.Mapper.DomainToDto(eventArgs.Event);
 
             var context = _workerContexts[eventDto.WorkerId];
-            var result = context.GetCallbackChannel<IJobManagerServiceCallback>().OnEventSync(eventDto);
+            var result = Callback(context).OnEventSync(eventDto);
             return result;
+        }
+
+        private void OnWorkerWillBeStartedHandler(object sender, JobManagerEventArgs eventArgs)
+        {
+            var workerId = eventArgs.Event.WorkerId;
+            var worker = JobRunner.Runner.GetWorkers().Single(w => w.Id == workerId);
+            var workerDto = WorkerDtoMapper.Mapper.DomainToDto(worker);
+
+            foreach (var context in _eventSubscribers.Select(x => x.Value))
+            {
+                Callback(context).WorkerWillBeStarted(workerDto);
+            }
+
+            //DefaultContext.GetCallbackChannel<IJobManagerServiceCallback>().OnEventSync(eventDto);
         }
     }
 }

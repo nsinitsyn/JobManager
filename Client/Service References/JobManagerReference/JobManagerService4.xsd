@@ -45,24 +45,36 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+  <xs:element name="GetWorkers">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetWorkersResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q8="http://schemas.datacontract.org/2004/07/JobManager.Transfer.Data.DTO" minOccurs="0" name="GetWorkersResult" nillable="true" type="q8:ArrayOfWorkerDto" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
   <xs:element name="ScheduleJob">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q8="http://schemas.datacontract.org/2004/07/JobManager.Transfer.Data.DTO" minOccurs="0" name="jobDto" nillable="true" type="q8:JobDto" />
+        <xs:element xmlns:q9="http://schemas.datacontract.org/2004/07/JobManager.Transfer.Data.DTO" minOccurs="0" name="jobDto" nillable="true" type="q9:JobDto" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="ScheduleJobResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q9="http://schemas.microsoft.com/2003/10/Serialization/" minOccurs="0" name="ScheduleJobResult" type="q9:guid" />
+        <xs:element xmlns:q10="http://schemas.microsoft.com/2003/10/Serialization/" minOccurs="0" name="ScheduleJobResult" type="q10:guid" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="RescheduleJob">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q10="http://schemas.datacontract.org/2004/07/JobManager.Transfer.Data.DTO" minOccurs="0" name="jobDto" nillable="true" type="q10:JobDto" />
+        <xs:element xmlns:q11="http://schemas.datacontract.org/2004/07/JobManager.Transfer.Data.DTO" minOccurs="0" name="jobDto" nillable="true" type="q11:JobDto" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -74,7 +86,7 @@
   <xs:element name="UnscheduleJob">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q11="http://schemas.microsoft.com/2003/10/Serialization/" minOccurs="0" name="jobId" type="q11:guid" />
+        <xs:element xmlns:q12="http://schemas.microsoft.com/2003/10/Serialization/" minOccurs="0" name="jobId" type="q12:guid" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -86,7 +98,7 @@
   <xs:element name="DeleteJob">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q12="http://schemas.microsoft.com/2003/10/Serialization/" minOccurs="0" name="jobId" type="q12:guid" />
+        <xs:element xmlns:q13="http://schemas.microsoft.com/2003/10/Serialization/" minOccurs="0" name="jobId" type="q13:guid" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -95,31 +107,75 @@
       <xs:sequence />
     </xs:complexType>
   </xs:element>
+  <xs:element name="SubscribeClientContext">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SubscribeClientContextResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UnsubscribeClientContext">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UnsubscribeClientContextResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SetClientContextToWorker">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q14="http://schemas.microsoft.com/2003/10/Serialization/" minOccurs="0" name="workerId" type="q14:guid" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SetClientContextToWorkerResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
   <xs:element name="OnEvent">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q13="http://schemas.datacontract.org/2004/07/JobManager.Transfer.Data.DTO" minOccurs="0" name="eventDto" nillable="true" type="q13:JobEventDto" />
+        <xs:element xmlns:q15="http://schemas.datacontract.org/2004/07/JobManager.Transfer.Data.DTO" minOccurs="0" name="eventDto" nillable="true" type="q15:JobEventDto" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="OnEventSync">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q14="http://schemas.datacontract.org/2004/07/JobManager.Transfer.Data.DTO" minOccurs="0" name="eventDto" nillable="true" type="q14:JobEventDto" />
+        <xs:element xmlns:q16="http://schemas.datacontract.org/2004/07/JobManager.Transfer.Data.DTO" minOccurs="0" name="eventDto" nillable="true" type="q16:JobEventDto" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="OnEventSyncResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q15="http://schemas.datacontract.org/2004/07/JobManager.Transfer.Data.DTO" minOccurs="0" name="OnEventSyncResult" nillable="true" type="q15:TransferData" />
+        <xs:element xmlns:q17="http://schemas.datacontract.org/2004/07/JobManager.Transfer.Data.DTO" minOccurs="0" name="OnEventSyncResult" nillable="true" type="q17:TransferData" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="WorkerWasStarted">
+  <xs:element name="WorkerWillBeStarted">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q16="http://schemas.datacontract.org/2004/07/JobManager.Transfer.Data.DTO" minOccurs="0" name="worker" nillable="true" type="q16:WorkerDto" />
+        <xs:element xmlns:q18="http://schemas.datacontract.org/2004/07/JobManager.Transfer.Data.DTO" minOccurs="0" name="worker" nillable="true" type="q18:WorkerDto" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ClientIdentifier">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ClientIdentifierResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q19="http://schemas.microsoft.com/2003/10/Serialization/" minOccurs="0" name="ClientIdentifierResult" type="q19:guid" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

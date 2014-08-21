@@ -43,10 +43,14 @@ namespace Client
                                  Data = new TransferData(jobData)
                              };
 
-            var workerDto = client.RunJob(jobDto);
-            WorkersKeeper.Worker1 = workerDto.Id;
-            Thread.Sleep(2000);
-            client.Signal(workerDto.Id, new TransferData("stop"));
+            var t = new Task(() => client.SubscribeClientContext());
+            t.ContinueWith(s => { var workerDto = client.RunJob(jobDto); });
+            t.Start();
+
+            //var workerDto = client.RunJob(jobDto);
+            //WorkersKeeper.Worker1 = workerDto.Id;
+            //Thread.Sleep(2000);
+            //client.Signal(workerDto.Id, new TransferData("stop"));
         }
 
         private void button2_Click(object sender, EventArgs e)

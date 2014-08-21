@@ -21,6 +21,7 @@ namespace JobManager.Business
     {
         public event JobManagerEventHandler OnEvent;
         public event JobManagerEventSyncHandler OnEventSync;
+        public event JobManagerEventHandler OnWorkerWillBeStarted;
 
         private static JobRunner _runner;
 
@@ -47,6 +48,8 @@ namespace JobManager.Business
             // Получить зарегистрированные джобы из базы
         }
 
+        #region Public methods
+        
         public Worker RunJob(Job job)
         {
             var className = job.ClassName;
@@ -70,6 +73,8 @@ namespace JobManager.Business
                 Instance = instance
             };
             _workers.Add(worker);
+
+            OnWorkerWillBeStarted(this, new JobManagerEventArgs { Event = new JobEvent { WorkerId = worker.Id } });
 
             var task = new Task<object>(() => instance.RunWrap(job.Data, worker));
             task.ContinueWith(t =>
@@ -135,6 +140,11 @@ namespace JobManager.Business
             return job;
         }
 
+        public List<Worker> GetWorkers()
+        {
+            return _workers;
+        }
+
         // Если джоба уже зашедулена, то exception (вначале нужно расшедулить ее)
         // Если джобы нет в базе, она создается и шедулится
         // Если джоба есть в базе, ее поля обновляются. Затем она шедулится
@@ -197,6 +207,8 @@ namespace JobManager.Business
             var result = ScheduledJob(jobId);
             return result;
         }
+
+        #endregion
 
         private void OnEventHandler(object sender, JobManagerEventArgs eventArgs)
         {

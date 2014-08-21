@@ -21,6 +21,9 @@ namespace JobManager.JobManagerService
         JobDto GetJob(Guid jobId);
 
         [OperationContract]
+        List<WorkerDto> GetWorkers(); // возвращает все воркеры, созданные за сеанс  !!!Нужно подумать о чистке этого списка, т. к. служба может работать очень долго
+
+        [OperationContract]
         Guid ScheduleJob(JobDto jobDto); // регит джобу в нашей базе и в quartz
 
         [OperationContract]
@@ -32,8 +35,19 @@ namespace JobManager.JobManagerService
         [OperationContract]
         void DeleteJob(Guid jobId); // удаляет джобу из нашей базы и из quartz
 
-        //List<Worker> GetWorkers();
-        //List<Job> GetJobs(); // Все задачи. Каждая задача имеет статус (Running, ...) и т.д.
+        #region Working on client contexts
+
+        [OperationContract]
+        void SubscribeClientContext();
+
+        [OperationContract]
+        void UnsubscribeClientContext();
+
+        [OperationContract]
+        void SetClientContextToWorker(Guid workerId);
+
+        #endregion
+
         // void ChangeJob(); // Изменить настройки (например триггеры джобе; в т.ч. той, которая регилась через конфиг - в этом случае нужно и в конфиге поменять триггеры)
 
         //// События

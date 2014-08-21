@@ -37,6 +37,12 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="WorkerDto" nillable="true" type="tns:WorkerDto" />
+  <xs:complexType name="ArrayOfWorkerDto">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="WorkerDto" nillable="true" type="tns:WorkerDto" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfWorkerDto" nillable="true" type="tns:ArrayOfWorkerDto" />
   <xs:complexType name="JobEventDto">
     <xs:sequence>
       <xs:element minOccurs="0" name="IsReturnResult" type="xs:boolean" />
